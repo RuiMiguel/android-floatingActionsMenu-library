@@ -1,0 +1,10 @@
+<resources>
+  <string name="app_name">FloatingActionMenu</string>
+
+  <string name="fab_button_search_text">Search</string>
+  <string name="fab_button_profile_text">Profile</string>
+  <string name="fab_button_emotion1_text">Emotion1</string>
+  <string name="fab_button_emotion2_text">Emotion2</string>
+  <string name="fab_button_emotion3_text">Emotion3</string>
+  <string name="fab_button_emotion4_text">Emotion4</string>
+</resources>
