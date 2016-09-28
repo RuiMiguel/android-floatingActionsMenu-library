@@ -1,7 +1,6 @@
 package com.ruialonso.floatingactionmenu;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void initViews() {
-
+    /*
     com.ruialonso.library.FloatingActionsMenu floatingActionsMenu =
         (com.ruialonso.library.FloatingActionsMenu) findViewById(R.id.floating_actions_menu);
     floatingActionsMenu.setOnClickListener(new View.OnClickListener() {
@@ -75,6 +74,6 @@ public class MainActivity extends AppCompatActivity {
         Snackbar.make(view, R.string.fab_button_emotion4_text, Snackbar.LENGTH_SHORT).show();
       }
     });
-
+*/
   }
 }

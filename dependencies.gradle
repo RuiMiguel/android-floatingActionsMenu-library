@@ -3,6 +3,7 @@ allprojects {
     libraries = [androidSupportV7          : 'com.android.support:appcompat-v7:23.3.0',
                  androidSupportDesign      : 'com.android.support:design:23.3.0',
 
+                 butterknife               : 'com.jakewharton:butterknife:6.1.0',
                  floatingactionbutton      : 'com.getbase:floatingactionbutton:1.10.1',
                  circularFloatingActionMenu: 'com.oguzdev:CircularFloatingActionMenu:1.0.2']
 

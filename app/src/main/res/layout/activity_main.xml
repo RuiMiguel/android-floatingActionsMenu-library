@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:ggg="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     tools:context=".MainActivity"
     >
@@ -28,71 +29,10 @@
 
   <include layout="@layout/content_main"/>
 
-  <com.ruialonso.library.FloatingActionsMenu
-      android:id="@+id/floating_actions_menu"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|center"
-      android:layout_margin="@dimen/fab_margin"
-      fab:fab_icon="@android:drawable/ic_dialog_email"
-      >
-
-    <com.ruialonso.library.FloatingActionsSubmenu
-        android:id="@+id/floating_actions_submenu_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:fab_expandDirection="horizontal"
-        >
-
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_search"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/ic_menu_search"
-          fab:fab_size="mini"
-          />
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_profile"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/stat_notify_chat"
-          fab:fab_size="mini"
-          />
-    </com.ruialonso.library.FloatingActionsSubmenu>
-
-    <com.ruialonso.library.FloatingActionsSubmenu
-        android:id="@+id/floating_actions_submenu_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        fab:fab_expandDirection="circular"
-        fab:radius="10dp"
-        >
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_emotion1"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/ic_menu_agenda"
-          />
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_emotion2"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/ic_menu_camera"
-          />
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_emotion3"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/ic_menu_compass"
-          />
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/floating_action_button_emotion4"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          fab:fab_icon="@android:drawable/ic_menu_gallery"
-          />
-    </com.ruialonso.library.FloatingActionsSubmenu>
-
-  </com.ruialonso.library.FloatingActionsMenu>
+  <com.ruialonso.floatingactionmenu.Fab
+      android:id="@+id/home_fab_button"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      />
 
 </android.support.design.widget.CoordinatorLayout>

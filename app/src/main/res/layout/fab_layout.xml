@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ggg="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+  <RelativeLayout
+      android:id="@+id/MenuBack"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_alignParentBottom="true"
+      android:background="#dd23ca20"
+      android:visibility="invisible"
+      >
+
+    <ImageView
+        android:layout_margin="10dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:src="@android:drawable/presence_audio_away"
+        />
+  </RelativeLayout>
+
+  <com.ruialonso.library.FloatingActionsMenu
+      android:id="@+id/menuFAB"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+
+      android:layout_marginBottom="16dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginRight="16dp"
+
+      ggg:fab_addButtonColorNormal="@android:color/transparent"
+      ggg:fab_addButtonColorPressed="@android:color/transparent"
+      ggg:fab_addButtonPlusIconColor="@android:color/transparent"
+      ggg:fab_colorNormal="@android:color/transparent"
+      ggg:fab_colorPressed="@android:color/transparent"
+      ggg:ggg_fontFamily="Thin"
+      ggg:ggg_icono="@android:drawable/presence_offline"
+      >
+
+    <com.ruialonso.library.FloatingActionButton
+        android:id="@+id/btnPhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ggg:fab_colorNormal="@android:color/holo_red_light"
+        ggg:fab_colorPressed="@android:color/holo_red_dark"
+        ggg:fab_icon="@android:drawable/ic_menu_compass"
+        ggg:fab_title="photo"
+        />
+
+    <com.ruialonso.library.FloatingActionButton
+        android:id="@+id/btnQR"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ggg:fab_colorNormal="@android:color/holo_red_light"
+        ggg:fab_colorPressed="@android:color/holo_red_dark"
+        ggg:fab_icon="@android:drawable/stat_notify_missed_call"
+        ggg:fab_title="qr"
+        />
+
+    <com.ruialonso.library.FloatingActionButton
+        android:id="@+id/btnSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        ggg:fab_colorNormal="@android:color/holo_red_light"
+        ggg:fab_colorPressed="@android:color/holo_red_dark"
+        ggg:fab_icon="@android:drawable/presence_audio_away"
+        ggg:fab_title="sound"
+        />
+
+  </com.ruialonso.library.FloatingActionsMenu>
+
+  <FrameLayout
+      android:id="@+id/frmOverMenuButton"
+      android:layout_width="70dp"
+      android:layout_height="70dp"
+      android:layout_alignParentBottom="true"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:layout_marginBottom="16dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginRight="16dp"
+      />
+
+</RelativeLayout>
