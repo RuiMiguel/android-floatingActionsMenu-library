@@ -8,58 +8,41 @@ import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 
-public class AddFloatingActionButton extends FloatingActionButton {
+public class FloatingActionMenuButton extends FloatingActionButton {
   int mPlusColor;
-  @DrawableRes private int mIcon;
 
-  public AddFloatingActionButton(Context context) {
-    this(context, null);
+  public FloatingActionMenuButton(Context context) {
+    super(context);
+    init(null, 0);
   }
 
-  public AddFloatingActionButton(Context context, AttributeSet attrs) {
+  public FloatingActionMenuButton(Context context, AttributeSet attrs) {
     super(context, attrs);
+    init(attrs, 0);
   }
 
-  public AddFloatingActionButton(Context context, AttributeSet attrs, int defStyle) {
+  public FloatingActionMenuButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
+    init(attrs, defStyle);
   }
 
-  @Override void init(Context context, AttributeSet attributeSet) {
+  @Override protected void init(AttributeSet attributeSet, int defStyle) {
+    super.init(attributeSet, defStyle);
+
+    loadAttributes(attributeSet, defStyle);
+  }
+
+  private void loadAttributes(AttributeSet attributeSet, int defStyle) {
     TypedArray attr =
-        context.obtainStyledAttributes(attributeSet, R.styleable.AddFloatingActionButton, 0, 0);
-    mPlusColor = attr.getColor(R.styleable.AddFloatingActionButton_fab_plusIconColor,
+        getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionMenuButton, 0,
+            0);
+    mPlusColor = attr.getColor(R.styleable.FloatingActionMenuButton_fab_plusIconColor,
         getColor(android.R.color.white));
 
     attr.recycle();
-    super.init(context, attributeSet);
   }
-
-  /**
-   * @return the current Color of plus icon.
-   */
-  public int getPlusColor() {
-    return mPlusColor;
-  }
-
-  public void setPlusColorResId(@ColorRes int plusColor) {
-    setPlusColor(getColor(plusColor));
-  }
-
-  public void setPlusColor(int color) {
-    if (mPlusColor != color) {
-      mPlusColor = color;
-      updateBackground();
-    }
-  }
-
-  //  @Override
-  //  public void setIcon(@DrawableRes int icon) {
-  //    throw new UnsupportedOperationException("Use FloatingActionButton if you want to use custom icon");
-  //  }
 
   @Override Drawable getIconDrawable() {
     final float iconSize = getDimension(R.dimen.fab_icon_size);

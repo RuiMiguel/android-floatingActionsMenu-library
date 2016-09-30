@@ -1,9 +1,7 @@
 package com.ruialonso.floatingactionmenu;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
-import android.support.v4.app.FragmentActivity;
+import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -12,129 +10,92 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.TranslateAnimation;
-import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import com.ruialonso.library.FloatingActionButton;
 import com.ruialonso.library.FloatingActionsMenu;
 
 public class Fab extends RelativeLayout {
 
-  @InjectView(R.id.frmOverMenuButton) FrameLayout frameOverLay;
+  private View rootView;
+  private RelativeLayout floatingActionsOverlay;
+  private FloatingActionsMenu floatingActionsMenu;
 
-  @InjectView(R.id.MenuBack) RelativeLayout mnuBack;
-
-  @InjectView(R.id.menuFAB) FloatingActionsMenu mnuFAB;
-
-  @InjectView(R.id.btnQR) FloatingActionButton btnCodigo;
-
-  @InjectView(R.id.btnSound) FloatingActionButton btnAudio;
-
-  @InjectView(R.id.btnPhoto) FloatingActionButton btnImagen;
-
-  boolean showMnuBack = true;
-  int screenH;
-  private FragmentActivity activity;
+  private OnFloatingActionMenuListener onFloatingActionMenuListener;
 
   public Fab(Context context) {
     super(context);
-    this.activity = (FragmentActivity) context;
-
-    init();
+    init(null, 0);
   }
 
   public Fab(Context context, AttributeSet attrs) {
     super(context, attrs);
-    this.activity = (FragmentActivity) context;
-
-    init();
+    init(attrs, 0);
   }
 
   public Fab(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    this.activity = (FragmentActivity) context;
-
-    init();
+    init(attrs, defStyleAttr);
   }
 
-  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-  public Fab(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    super(context, attrs, defStyleAttr, defStyleRes);
-    this.activity = (FragmentActivity) context;
+  private void init(AttributeSet attrs, int defStyleAttr) {
+    loadAttributes(attrs, defStyleAttr);
 
-    init();
-  }
-
-  private void init() {
     initViews();
-    setListeners();
+    bindListeners();
+  }
+
+  private void loadAttributes(AttributeSet attrs, int defStyle) {
+
   }
 
   private void initViews() {
     LayoutInflater inflater =
-        (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    View v = inflater.inflate(R.layout.fab_layout, this, true);
-    ButterKnife.inject(this, v);
+        (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    rootView = inflater.inflate(R.layout.fab_layout, this, true);
+
+    floatingActionsOverlay = (RelativeLayout) findViewById(R.id.floating_actions_overlay);
+    floatingActionsMenu = (FloatingActionsMenu) findViewById(R.id.floating_actions_menu);
+
+    floatingActionsOverlay.setVisibility(View.INVISIBLE);
   }
 
-  private void setListeners() {
-    frameOverLay.setOnClickListener(new View.OnClickListener() {
+  private void bindListeners() {
+    floatingActionsOverlay.setOnClickListener(new OnClickListener() {
+      @Override public void onClick(View view) {
+        view.invalidate();
+      }
+    });
+
+    floatingActionsMenu.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
-        v.invalidate();
-        showOrHideMnuLayerBack();
+        if (onFloatingActionMenuListener != null) {
+          onFloatingActionMenuListener.onFloatingMenuClick();
+        }
       }
     });
-    mnuBack.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View v) {
-        v.invalidate();
-      }
-    });
-
-    btnCodigo.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        // Toast.makeText(view.getContext(), "Boton escaner de codigo clickau", Toast.LENGTH_SHORT).show();
-        showOrHideMnuLayerBack();
-        onScanPressed();
-      }
-    });
-
-    btnAudio.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        //  Toast.makeText(view.getContext(), "Boton escaner audio clickau", Toast.LENGTH_SHORT).show();
-        showOrHideMnuLayerBack();
-        onListen();
-
-        //                Intent i = new Intent(activity, MapViewActivity.class);
-        //                i.putExtra(Constants.ClaraTags.ID_PROMO, "pruebatest");
-        //                activity.startActivity(i);
-      }
-    });
-    btnImagen.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        //  Toast.makeText(view.getContext(), "Boton escaner de imagen clickau", Toast.LENGTH_SHORT).show();
-        showOrHideMnuLayerBack();
-        onImageScanPressed();
+    floatingActionsMenu.setOnToggleListener(new FloatingActionsMenu.OnToggleListener() {
+      @Override public void onToggle(boolean menuOverlayVisibility) {
+        toogleOverlay(menuOverlayVisibility);
+        if (onFloatingActionMenuListener != null) {
+          onFloatingActionMenuListener.onFloatingMenuToggle();
+        }
       }
     });
   }
 
-  private void showOrHideMnuLayerBack() {
-    Animation slide = null;
-    screenH = getMaxHeigth();
-    if (showMnuBack) {
-      mnuBack.setVisibility(View.VISIBLE);
-      mnuFAB.expand();
-      slide = new TranslateAnimation(0, 0, screenH,
-          0); //asv quizas esto es mas gitano q Camraon de la ISla...
+  private void toogleOverlay(boolean overlayVisible) {
+    Animation slide;
+    final int screenHeight = getScreenHeight();
+
+    if (overlayVisible) {
+      floatingActionsOverlay.setVisibility(View.VISIBLE);
+      slide = new TranslateAnimation(0, 0, screenHeight, 0);
     } else {
-      mnuBack.setVisibility(View.INVISIBLE);
-      mnuFAB.collapse();
-      slide = new TranslateAnimation(0, 0, 0, screenH);
+      floatingActionsOverlay.setVisibility(View.INVISIBLE);
+      slide = new TranslateAnimation(0, 0, 0, screenHeight);
     }
     slide.setInterpolator(new Interpolator() {
       @Override public float getInterpolation(float input) {
-        if (input < screenH / 3) {
+        if (input < screenHeight / 3) {
           return 1f;
         } else {
           return 3f;
@@ -144,7 +105,7 @@ public class Fab extends RelativeLayout {
     slide.setDuration(3000);
     slide.setFillAfter(true);
     slide.setFillEnabled(true);
-    mnuBack.startAnimation(slide);
+    floatingActionsOverlay.startAnimation(slide);
 
     slide.setAnimationListener(new Animation.AnimationListener() {
 
@@ -153,38 +114,37 @@ public class Fab extends RelativeLayout {
       }
 
       @Override public void onAnimationRepeat(Animation animation) {
+
       }
 
       @Override public void onAnimationEnd(Animation animation) {
-
-        mnuBack.clearAnimation();
+        floatingActionsOverlay.clearAnimation();
 
         RelativeLayout.LayoutParams lp =
-            new RelativeLayout.LayoutParams(mnuBack.getWidth(), mnuBack.getHeight());
-        // lp.setMargins(0, 0, 0, 0);
+            new RelativeLayout.LayoutParams(floatingActionsOverlay.getWidth(),
+                floatingActionsOverlay.getHeight());
         lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        mnuBack.setLayoutParams(lp);
+        floatingActionsOverlay.setLayoutParams(lp);
       }
     });
-    showMnuBack = !showMnuBack;
   }
 
-  private int getMaxHeigth() {
-    WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+  private int getScreenHeight() {
+    WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
     Display display = wm.getDefaultDisplay();
+    Point deviceDisplay = new Point();
+    display.getSize(deviceDisplay);
 
-    return display.getHeight();
+    return deviceDisplay.y;
   }
 
-  public void onScanPressed() {
-
+  public void setOnFloatingActionMenuListener(OnFloatingActionMenuListener listener) {
+    this.onFloatingActionMenuListener = listener;
   }
 
-  private void onImageScanPressed() {
+  public interface OnFloatingActionMenuListener {
+    void onFloatingMenuClick();
 
-  }
-
-  public void onListen() {
-
+    void onFloatingMenuToggle();
   }
 }

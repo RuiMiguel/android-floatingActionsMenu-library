@@ -57,22 +57,28 @@ public class FloatingActionButton extends ImageButton {
   boolean mStrokeVisible;
 
   public FloatingActionButton(Context context) {
-    this(context, null);
+    super(context);
+    init(null, 0);
   }
 
   public FloatingActionButton(Context context, AttributeSet attrs) {
     super(context, attrs);
-    init(context, attrs);
+    init(attrs, 0);
   }
 
   public FloatingActionButton(Context context, AttributeSet attrs, int defStyle) {
     super(context, attrs, defStyle);
-    init(context, attrs);
+    init(attrs, defStyle);
   }
 
-  void init(Context context, AttributeSet attributeSet) {
+  protected void init(AttributeSet attributeSet, int defStyle) {
+    loadAttributes(attributeSet, defStyle);
+    initViews();
+  }
+
+  private void loadAttributes(AttributeSet attributeSet, int defStyle) {
     TypedArray attr =
-        context.obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
+        getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
     mColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_colorNormal,
         getColor(android.R.color.holo_blue_dark));
     mColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_colorPressed,
@@ -86,13 +92,15 @@ public class FloatingActionButton extends ImageButton {
 
     if (mIcon == 0) {
       TypedArray attr2 =
-          context.obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
+          getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
       mIconASV = attr2.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
       if (mIconASV != 0) mIcon = mIconASV;
 
     }
     attr.recycle();
+  }
 
+  private void initViews() {
     updateCircleSize();
     mShadowRadius = getDimension(R.dimen.fab_shadow_radius);
     mShadowOffset = getDimension(R.dimen.fab_shadow_offset);

@@ -22,8 +22,6 @@ dependencies {
   compile rootProject.ext.libraries.androidSupportV7
   compile rootProject.ext.libraries.androidSupportDesign
 
-  compile rootProject.ext.libraries.butterknife
-
   /*compile rootProject.ext.libraries.circularFloatingActionMenu
   compile rootProject.ext.libraries.floatingactionbutton*/
 }

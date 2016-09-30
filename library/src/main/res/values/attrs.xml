@@ -24,24 +24,33 @@
     <attr name="ggg_icono"
         format="reference"/>
   </declare-styleable>
-  <declare-styleable name="AddFloatingActionButton">
+
+  <declare-styleable name="FloatingActionMenuButton">
     <attr name="fab_plusIconColor"
         format="color"/>
   </declare-styleable>
+
   <declare-styleable name="FloatingActionsMenu">
-    <attr name="ggg_fontFamily"
+    <attr name="fab_vertical_alignment"
         format="enum">
-      <enum name="Thin"
-          value="0"/>
-      <enum name="Bold"
-          value="1"/>
-      <enum name="CondensedRegular"
-          value="2"/>
-      <enum name="Light"
-          value="3"/>
-      <enum name="ThinItalic"
-          value="4"/>
+    <enum name="center"
+        value="0"/>
+    <enum name="top"
+        value="1"/>
+    <enum name="bottom"
+        value="2"/>
     </attr>
+    <attr name="fab_horizontal_alignment"
+        format="enum">
+      <enum name="center"
+          value="0"/>
+      <enum name="left"
+          value="1"/>
+      <enum name="right"
+          value="2"/>
+    </attr>
+
+
 
     <attr name="fab_addButtonColorPressed"
         format="color"/>
