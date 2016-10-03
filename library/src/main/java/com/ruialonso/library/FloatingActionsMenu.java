@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
+import android.widget.RelativeLayout;
 import com.ruialonso.library.animation.RotationDrawable;
 import java.util.ArrayList;
 import java.util.List;
@@ -181,6 +182,9 @@ public class FloatingActionsMenu extends ViewGroup {
   private void addDefaultSubmenuIfNeeded(List<FloatingActionButton> floatingActionButtonList) {
     if (floatingActionButtonList.size() > 0 && floatingActionsSubmenuList.size() == 0) {
       FloatingActionsSubmenu defaultActionSubmenu = new FloatingActionsSubmenu(getContext());
+      for(int i=0; i<floatingActionButtonList.size(); i++)
+        removeView(floatingActionButtonList.get(i));
+
       defaultActionSubmenu.addButtons(floatingActionButtonList);
       addSubmenu(defaultActionSubmenu);
     }
@@ -249,84 +253,118 @@ public class FloatingActionsMenu extends ViewGroup {
 
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
     final int count = getChildCount();
-    int childWidth, childHeight, childLeft, childTop;
 
     //get the available size of child view
     final int menuLeft = this.getPaddingLeft();
     final int menuTop = this.getPaddingTop();
     final int menuRight = this.getMeasuredWidth() - this.getPaddingRight();
     final int menuBottom = this.getMeasuredHeight() - this.getPaddingBottom();
-    final int menuMaxWidth = menuRight - menuLeft;
-    final int menuMaxHeight = menuBottom - menuTop;
 
-    Point menuCenter = new Point();
-    menuCenter.x = menuMaxWidth / 2;
-    menuCenter.y = menuMaxHeight / 2;
+    setRootLayout();
 
     for (int i = 0; i < count; i++) {
       View child = getChildAt(i);
 
-      if (child.getVisibility() == GONE) return;
-
-      childLeft = menuLeft;
-      childTop = menuTop;
-
-      switch (verticalAlignment) {
-        case ALIGNMENT_CENTER:
-          childTop = menuCenter.y - child.getMeasuredHeight() / 2;
-          break;
-        case ALIGNMENT_TOP:
-          childTop = menuTop;
-          break;
-        case ALIGNMENT_BOTTOM:
-          childTop = menuBottom - child.getMeasuredHeight();
-          break;
-      }
-      switch (horizontalAlignment) {
-        case ALIGNMENT_CENTER:
-          childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
-          break;
-        case ALIGNMENT_LEFT:
-          childLeft = menuLeft;
-          break;
-        case ALIGNMENT_RIGHT:
-          childLeft = menuRight - child.getMeasuredWidth();
-          break;
-      }
-
-      child.layout(childLeft, childTop, childLeft + child.getMeasuredWidth(),
-          childTop + child.getMeasuredHeight());
-
-      switch (expandDirection) {
-        case EXPAND_UP:
-
-          break;
-        case EXPAND_DOWN:
-
-          break;
-        case EXPAND_LEFT:
-          break;
-        case EXPAND_RIGHT:
-          break;
-        case EXPAND_HORIZONTAL:
-          break;
-        case EXPAND_ROUND:
-          break;
-        case EXPAND_FAN:
-          break;
-        default:
-          break;
-      }
-
-      //Get the maximum size of the child
-      child.measure(MeasureSpec.makeMeasureSpec(menuMaxWidth, MeasureSpec.AT_MOST),
-          MeasureSpec.makeMeasureSpec(menuMaxHeight, MeasureSpec.AT_MOST));
-      childWidth = child.getMeasuredWidth();
-      childHeight = child.getMeasuredHeight();
-
-      //do the layout
-      child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+      setChildrenLayout(child, menuLeft, menuTop, menuRight, menuBottom);
     }
+  }
+
+  private void setRootLayout() {
+    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
+
+    switch (verticalAlignment) {
+      case ALIGNMENT_CENTER:
+        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        break;
+      case ALIGNMENT_TOP:
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        break;
+      case ALIGNMENT_BOTTOM:
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        break;
+    }
+    switch (horizontalAlignment) {
+      case ALIGNMENT_CENTER:
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        break;
+      case ALIGNMENT_LEFT:
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        break;
+      case ALIGNMENT_RIGHT:
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        break;
+    }
+
+    setLayoutParams(layoutParams);
+  }
+
+  private void setChildrenLayout(View child, int left, int top, int right, int bottom) {
+    int childWidth, childHeight, childLeft, childTop;
+    final int maxWidth = right - left;
+    final int maxHeight = bottom - top;
+
+    Point menuCenter = new Point();
+    menuCenter.x = maxWidth / 2;
+    menuCenter.y = maxHeight / 2;
+
+    if (child.getVisibility() == GONE) return;
+
+    childLeft = left;
+    childTop = top;
+
+    switch (verticalAlignment) {
+      case ALIGNMENT_CENTER:
+        childTop = menuCenter.y - child.getMeasuredHeight() / 2;
+        break;
+      case ALIGNMENT_TOP:
+        childTop = top;
+        break;
+      case ALIGNMENT_BOTTOM:
+        childTop = bottom - child.getMeasuredHeight();
+        break;
+    }
+    switch (horizontalAlignment) {
+      case ALIGNMENT_CENTER:
+        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
+        break;
+      case ALIGNMENT_LEFT:
+        childLeft = left;
+        break;
+      case ALIGNMENT_RIGHT:
+        childLeft = right - child.getMeasuredWidth();
+        break;
+    }
+
+    child.layout(childLeft, childTop, childLeft + child.getMeasuredWidth(),
+        childTop + child.getMeasuredHeight());
+
+    switch (expandDirection) {
+      case EXPAND_UP:
+
+        break;
+      case EXPAND_DOWN:
+
+        break;
+      case EXPAND_LEFT:
+        break;
+      case EXPAND_RIGHT:
+        break;
+      case EXPAND_HORIZONTAL:
+        break;
+      case EXPAND_ROUND:
+        break;
+      case EXPAND_FAN:
+        break;
+    }
+
+    //Get the maximum size of the child
+    child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+        MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+    childWidth = child.getMeasuredWidth();
+    childHeight = child.getMeasuredHeight();
+
+    //do the layout
+    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
   }
 
   //region Add/Remove submenus

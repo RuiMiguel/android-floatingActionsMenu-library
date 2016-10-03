@@ -33,9 +33,8 @@
 
       ggg:fab_vertical_alignment="bottom"
       ggg:fab_horizontal_alignment="center"
-      android:background="@color/colorAccent"
-      android:padding="10dp"
 
+      android:background="@color/colorAccent"
       ggg:fab_addButtonColorNormal="@android:color/transparent"
       ggg:fab_addButtonColorPressed="@android:color/transparent"
       ggg:fab_addButtonPlusIconColor="@android:color/transparent"
