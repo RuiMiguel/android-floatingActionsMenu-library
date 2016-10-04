@@ -6,18 +6,27 @@ import android.graphics.Point;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * Created by rui.alonso on 27/9/16.
  */
 
 public class FloatingActionsSubmenu extends ViewGroup {
+  public static final int EXPAND_UP = 0;
+  public static final int EXPAND_DOWN = 1;
+  public static final int EXPAND_LEFT = 2;
+  public static final int EXPAND_RIGHT = 3;
+  public static final int EXPAND_HORIZONTAL = 4;
+  public static final int EXPAND_ROUND = 5;
+  public static final int EXPAND_FAN = 6;
+
   public boolean isVisible = false;
 
+  public boolean enableOverlay;
   private int expandDirection;
   private int buttonSpacing;
 
@@ -26,7 +35,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
   private int menuRight;
   private int menuBottom;
 
-  private Point menuCenter;
+  private FloatingActionsMenu menu;
 
   private List<FloatingActionButton> floatingActionButtonItems;
 
@@ -54,14 +63,15 @@ public class FloatingActionsSubmenu extends ViewGroup {
   }
 
   private void loadAttributes(AttributeSet attributeSet, int defStyle) {
+    TypedArray attrMenu =
+        getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsMenu, 0, 0);
+
     TypedArray attrSubmenu =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsSubmenu, 0, 0);
 
-    expandDirection =
-        attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, FloatingActionsMenu.EXPAND_UP);
-    buttonSpacing =
-        attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing, 5);
-
+    enableOverlay = attrSubmenu.getBoolean(R.styleable.FloatingActionsSubmenu_fab_enable_overlay, false);
+    expandDirection = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, EXPAND_UP);
+    buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing, 5);
 
     attrSubmenu.recycle();
   }
@@ -85,6 +95,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
   //childTop += floatingActionMenuButton.getMeasuredHeight();
   //childLeft += floatingActionMenuButton.getMeasuredWidth();
 
+  //region measure
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     int count = getChildCount();
     // Measurement will ultimately be computing these values.
@@ -103,27 +114,27 @@ public class FloatingActionsSubmenu extends ViewGroup {
       height = child.getMeasuredHeight();
 
       switch (expandDirection) {
-        case FloatingActionsMenu.EXPAND_UP:
-        case FloatingActionsMenu.EXPAND_DOWN:
+        case EXPAND_UP:
+        case EXPAND_DOWN:
           maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
           height += child.getMeasuredHeight();
           height += buttonSpacing * (getChildCount() - 1);
           height = adjustForOvershoot(height);
           break;
-        case FloatingActionsMenu.EXPAND_LEFT:
-        case FloatingActionsMenu.EXPAND_RIGHT:
+        case EXPAND_LEFT:
+        case EXPAND_RIGHT:
           width += child.getMeasuredWidth();
           width += buttonSpacing * (getChildCount() - 1);
           width = adjustForOvershoot(width);
           break;
-        case FloatingActionsMenu.EXPAND_HORIZONTAL:
+        case EXPAND_HORIZONTAL:
           maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
           width += child.getMeasuredWidth();
           width += buttonSpacing * (getChildCount() - 1);
           width = adjustForOvershoot(width);
           break;
-        case FloatingActionsMenu.EXPAND_ROUND:
-        case FloatingActionsMenu.EXPAND_FAN:
+        case EXPAND_ROUND:
+        case EXPAND_FAN:
           maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
           height += child.getMeasuredHeight();
           height += buttonSpacing * (getChildCount() - 1);
@@ -147,104 +158,115 @@ public class FloatingActionsSubmenu extends ViewGroup {
   private int adjustForOvershoot(int dimension) {
     return dimension * 12 / 10;
   }
+  //endregion
 
+  //region layout
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
-    final int count = getChildCount();
-
     //get the available size of child view
     menuLeft = this.getPaddingLeft();
     menuTop = this.getPaddingTop();
     menuRight = this.getMeasuredWidth() - this.getPaddingRight();
     menuBottom = this.getMeasuredHeight() - this.getPaddingBottom();
 
-    setRootLayout(menuLeft, menuTop, menuRight, menuBottom);
+    menu = (FloatingActionsMenu)getParent();
 
-    for (int i = 0; i < count; i++) {
-      View child = getChildAt(i);
-      if (child.getVisibility() != GONE) {
-        setChildrenLayout(child, menuLeft, menuTop, menuRight, menuBottom);
-      }
-    }
+    setRootLayout(menuLeft, menuTop, menuRight, menuBottom);
+    setChildrenLayout(menuLeft, menuTop, menuRight, menuBottom);
   }
 
   private void setRootLayout(int left, int top, int right, int bottom) {
     final int maxWidth = right - left;
     final int maxHeight = bottom - top;
 
+    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) getLayoutParams();
+
     switch (expandDirection) {
-      case FloatingActionsMenu.EXPAND_UP:
-        menuBottom += 216;
+      case EXPAND_UP:
+        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        layoutParams.setMargins(0, 0, 0, menu.floatingActionMenuButton.getMeasuredHeight());
         break;
-      case FloatingActionsMenu.EXPAND_DOWN:
-        menuTop += 216;
-        break;
-      case FloatingActionsMenu.EXPAND_LEFT:
-        menuRight += 216;
-        break;
-      case FloatingActionsMenu.EXPAND_RIGHT:
-        menuLeft += 216;
-        break;
-      case FloatingActionsMenu.EXPAND_HORIZONTAL:
+      case EXPAND_DOWN:
+        layoutParams.setMargins(0, menu.floatingActionMenuButton.getMeasuredHeight(), 0, 0);
 
         break;
-      case FloatingActionsMenu.EXPAND_ROUND:
-      case FloatingActionsMenu.EXPAND_FAN:
+      case EXPAND_LEFT:
+        layoutParams.setMargins(0, 0, menu.floatingActionMenuButton.getMeasuredWidth(), 0);
+
+        break;
+      case EXPAND_RIGHT:
+        layoutParams.setMargins(menu.floatingActionMenuButton.getMeasuredWidth(), 0, 0, 0);
+
+        break;
+      case EXPAND_HORIZONTAL:
+
+        break;
+      case EXPAND_ROUND:
+
+        break;
+      case EXPAND_FAN:
 
         break;
     }
 
-
+    setLayoutParams(layoutParams);
   }
 
-  private void setChildrenLayout(View child, int left, int top, int right, int bottom) {
+  private void setChildrenLayout(int left, int top, int right, int bottom) {
+    int count = getChildCount();
+
     int childWidth, childHeight, childLeft, childTop;
     final int maxWidth = right - left;
     final int maxHeight = bottom - top;
 
-    childLeft = left;
-    childTop = top;
-    /*
-    switch (expandDirection) {
-      case FloatingActionsMenu.EXPAND_UP:
-        childTop = menuCenter.y
-            - child.getMeasuredHeight();
+    int nextX = left;
+    int nextY = top;
 
-        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
-        break;
-      case FloatingActionsMenu.EXPAND_DOWN:
-        childTop = menuCenter.y;
-        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
-        break;
-      case FloatingActionsMenu.EXPAND_LEFT:
-        childLeft = menuCenter.x
-            - child.getMeasuredWidth();
+    for (int i = 0; i < count; i++) {
+      View child = getChildAt(i);
+      if (child.getVisibility() == GONE) return;
 
-        childTop = menuCenter.y;
-        break;
-      case FloatingActionsMenu.EXPAND_RIGHT:
-        childLeft = menuCenter.x;
-        childTop = menuCenter.y;
-        break;
-      case FloatingActionsMenu.EXPAND_HORIZONTAL:
-        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
-        childTop = menuCenter.y - child.getMeasuredWidth() / 2;
-        break;
-      case FloatingActionsMenu.EXPAND_ROUND:
-      case FloatingActionsMenu.EXPAND_FAN:
-        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
-        childTop = menuCenter.y - child.getMeasuredHeight() / 2;
-        break;
+      childLeft = nextX;
+      childTop = nextY;
+
+      /*
+      switch (expandDirection) {
+        case FloatingActionsMenu.EXPAND_UP:
+          childTop -= child.getMeasuredHeight();
+          nextY = childTop - buttonSpacing;
+          break;
+        case FloatingActionsMenu.EXPAND_DOWN:
+          childTop = top;
+          nextY = childTop + buttonSpacing;
+          break;
+        case FloatingActionsMenu.EXPAND_LEFT:
+          childLeft -= child.getMeasuredWidth();
+          nextX = childLeft - buttonSpacing;
+          break;
+        case FloatingActionsMenu.EXPAND_RIGHT:
+          childLeft = left;
+          nextX = childLeft + buttonSpacing;
+          break;
+        case FloatingActionsMenu.EXPAND_HORIZONTAL:
+
+          break;
+        case FloatingActionsMenu.EXPAND_ROUND:
+        case FloatingActionsMenu.EXPAND_FAN:
+
+          break;
+      }
+      */
+
+      //Get the maximum size of the child
+      child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+          MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+      childWidth = child.getMeasuredWidth();
+      childHeight = child.getMeasuredHeight();
+
+      //do the layout
+      child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
     }
-*/
-    //Get the maximum size of the child
-    child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-        MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-    childWidth = child.getMeasuredWidth();
-    childHeight = child.getMeasuredHeight();
-
-    //do the layout
-    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
   }
+  //endregion
 
   //region Add/Remove buttons
   public boolean addButton(FloatingActionButton floatingActionButton) {
@@ -303,17 +325,16 @@ public class FloatingActionsSubmenu extends ViewGroup {
       }
     }
   }
-  //endregion
 
   @Override public void setVisibility(int visibility) {
-    if(visibility == VISIBLE) {
+    if (visibility == VISIBLE) {
       isVisible = true;
-    }
-    else {
+    } else {
       isVisible = false;
     }
     super.setVisibility(visibility);
   }
+  //endregion
 
   public void setOnFloatingActionSubmenuUpdateListener(
       OnFloatingActionSubmenuUpdateListener listener) {

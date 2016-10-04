@@ -97,5 +97,7 @@
     </attr>
     <attr format="integer"
         name="fab_button_spacing"/>
+    <attr format="boolean"
+        name="fab_enable_overlay"/>
   </declare-styleable>
 </resources>

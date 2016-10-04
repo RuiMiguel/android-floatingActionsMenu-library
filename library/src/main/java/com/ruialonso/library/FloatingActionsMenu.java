@@ -17,15 +17,7 @@ import com.ruialonso.library.animation.RotationDrawable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FloatingActionsMenu extends ViewGroup {
-  public static final int EXPAND_UP = 0;
-  public static final int EXPAND_DOWN = 1;
-  public static final int EXPAND_LEFT = 2;
-  public static final int EXPAND_RIGHT = 3;
-  public static final int EXPAND_HORIZONTAL = 4;
-  public static final int EXPAND_ROUND = 5;
-  public static final int EXPAND_FAN = 6;
-
+public class FloatingActionsMenu extends RelativeLayout {
   public static final int ALIGNMENT_CENTER = 0;
   public static final int ALIGNMENT_LEFT = 1;
   public static final int ALIGNMENT_RIGHT = 2;
@@ -35,15 +27,15 @@ public class FloatingActionsMenu extends ViewGroup {
   public static final int ANIMATION_DURATION = 300;
   public static final float FLIP_PLUS_ROTATION = 180f;
 
-  private Point menuButtonCenter;
+  public Point menuButtonCenter;
 
   private RotationDrawable rotationDrawable;
   private AnimatorSet flipAnimation;
 
-  private FloatingActionMenuButton floatingActionMenuButton;
+  public FloatingActionMenuButton floatingActionMenuButton;
 
-  private int verticalAlignment;
-  private int horizontalAlignment;
+  public int verticalAlignment;
+  public int horizontalAlignment;
 
   private int mAddButtonPlusColor;
   private int mAddButtonColorNormal;
@@ -87,11 +79,12 @@ public class FloatingActionsMenu extends ViewGroup {
     horizontalAlignment =
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
 
-
-    mAddButtonPlusColor = attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
-        getResources().getColor(android.R.color.white));
-    mAddButtonColorNormal = attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal,
-        getResources().getColor(android.R.color.holo_blue_dark));
+    mAddButtonPlusColor =
+        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
+            getResources().getColor(android.R.color.white));
+    mAddButtonColorNormal =
+        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal,
+            getResources().getColor(android.R.color.holo_blue_dark));
     mAddButtonColorPressed =
         attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorPressed,
             getResources().getColor(android.R.color.holo_blue_light));
@@ -100,22 +93,18 @@ public class FloatingActionsMenu extends ViewGroup {
     mAddButtonStrokeVisible =
         attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
 
-
     mTouchDelegateGroup = new TouchDelegateGroup(this);
     setTouchDelegate(mTouchDelegateGroup);
-
 
     TypedArray attrButton =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
     mIconASV = attrButton.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
-
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       mIconDrawableASV = getContext().getDrawable(mIconASV);
     } else {
       mIconDrawableASV = getContext().getResources().getDrawable(mIconASV);
     }
-
 
     attrMenu.recycle();
     attrButton.recycle();
@@ -213,6 +202,7 @@ public class FloatingActionsMenu extends ViewGroup {
     }
   }
 
+  //region measure
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     int count = getChildCount();
     // Measurement will ultimately be computing these values.
@@ -237,7 +227,9 @@ public class FloatingActionsMenu extends ViewGroup {
     // Report our final dimensions.
     setMeasuredDimension(maxWidth, maxHeight);
   }
+  //endregion
 
+  //region layout
   @Override protected void onLayout(boolean changed, int l, int t, int r, int b) {
     final int count = getChildCount();
 
@@ -253,7 +245,7 @@ public class FloatingActionsMenu extends ViewGroup {
       View child = getChildAt(i);
       if (child.getVisibility() != GONE) {
         if (child == floatingActionMenuButton) {
-          setMenuButtonLayout(child, menuLeft, menuTop, menuRight, menuBottom);
+          setMenuButtonLayout(child, menuRight - menuLeft, menuBottom - menuTop);
         } else {
           setChildrenLayout(child, menuLeft, menuTop, menuRight, menuBottom);
         }
@@ -301,13 +293,11 @@ public class FloatingActionsMenu extends ViewGroup {
     setLayoutParams(layoutParams);
   }
 
-  private void setMenuButtonLayout(View child, int left, int top, int right, int bottom) {
+  private void setMenuButtonLayout(View child, int maxWidth, int maxHeight) {
     int menuButtonWidth, menuButtonHeight, menuButtonLeft, menuButtonTop;
-    final int maxWidth = right - left;
-    final int maxHeight = bottom - top;
 
-    menuButtonLeft = menuButtonCenter.x - floatingActionMenuButton.getMeasuredWidth()/2;
-    menuButtonTop = menuButtonCenter.y - floatingActionMenuButton.getMeasuredHeight()/2;
+    menuButtonLeft = menuButtonCenter.x - floatingActionMenuButton.getMeasuredWidth() / 2;
+    menuButtonTop = menuButtonCenter.y - floatingActionMenuButton.getMeasuredHeight() / 2;
 
     //Get the maximum size of the child
     child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
@@ -361,6 +351,7 @@ public class FloatingActionsMenu extends ViewGroup {
     //do the layout
     child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
   }
+  //endregion
 
   //region Add/Remove submenus
   public boolean addSubmenu(FloatingActionsSubmenu floatingActionsSubmenu) {
@@ -423,11 +414,10 @@ public class FloatingActionsMenu extends ViewGroup {
 
     if (currentSubmenuIndex < (floatingActionsSubmenuList.size() - 1)) {
       currentSubmenuIndex++;
-      notifyMenuOverlayVisibility(true); //TO-DO: notify if submenu want to
     } else {
       currentSubmenuIndex = 0;
-      notifyMenuOverlayVisibility(false); //TO-DO: notify if submenu want to
     }
+    notifyMenuOverlayVisibility(floatingActionsSubmenuList.get(currentSubmenuIndex).enableOverlay);
 
     floatingActionsSubmenuList.get(currentSubmenuIndex).expand();
   }

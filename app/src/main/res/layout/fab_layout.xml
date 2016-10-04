@@ -51,7 +51,16 @@
         ggg:fab_expand_direction="up"
         >
       <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/btnPhoto"
+          android:id="@+id/btn_action1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          ggg:fab_colorNormal="@android:color/holo_red_light"
+          ggg:fab_colorPressed="@android:color/holo_red_dark"
+          ggg:fab_icon="@android:drawable/ic_menu_compass"
+          ggg:fab_title="photo"
+          />
+      <com.ruialonso.library.FloatingActionButton
+          android:id="@+id/btn_action2"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           ggg:fab_colorNormal="@android:color/holo_red_light"
@@ -68,9 +77,10 @@
         android:background="@color/colorPrimaryDark"
 
         ggg:fab_expand_direction="horizontal"
+        ggg:fab_enable_overlay="true"
         >
       <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/btnQR"
+          android:id="@+id/btn_action3"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           ggg:fab_colorNormal="@android:color/holo_red_light"
@@ -78,9 +88,8 @@
           ggg:fab_icon="@android:drawable/stat_notify_missed_call"
           ggg:fab_title="qr"
           />
-
       <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/btnSound"
+          android:id="@+id/btn_action4"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           ggg:fab_colorNormal="@android:color/holo_red_light"
@@ -90,6 +99,45 @@
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
 
+    <com.ruialonso.library.FloatingActionsSubmenu
+        android:id="@+id/floating_actions_submenu3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_orange_dark"
+
+        ggg:fab_expand_direction="left"
+        ggg:fab_enable_overlay="false"
+        >
+      <com.ruialonso.library.FloatingActionButton
+          android:id="@+id/btn_action5"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          ggg:fab_colorNormal="@android:color/holo_red_light"
+          ggg:fab_colorPressed="@android:color/holo_red_dark"
+          ggg:fab_icon="@android:drawable/ic_menu_compass"
+          ggg:fab_title="photo"
+          />
+    </com.ruialonso.library.FloatingActionsSubmenu>
+
+    <com.ruialonso.library.FloatingActionsSubmenu
+        android:id="@+id/floating_actions_submenu4"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimaryDark"
+
+        ggg:fab_expand_direction="right"
+        ggg:fab_enable_overlay="true"
+        >
+      <com.ruialonso.library.FloatingActionButton
+          android:id="@+id/btn_action6"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          ggg:fab_colorNormal="@android:color/holo_red_light"
+          ggg:fab_colorPressed="@android:color/holo_red_dark"
+          ggg:fab_icon="@android:drawable/ic_menu_compass"
+          ggg:fab_title="photo"
+          />
+    </com.ruialonso.library.FloatingActionsSubmenu>
 
   </com.ruialonso.library.FloatingActionsMenu>
 </RelativeLayout>
