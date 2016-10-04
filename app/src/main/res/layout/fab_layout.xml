@@ -47,7 +47,8 @@
         android:id="@+id/floating_actions_submenu1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@android:color/holo_orange_dark"
+        ggg:fab_expand_direction="up"
         >
       <com.ruialonso.library.FloatingActionButton
           android:id="@+id/btnPhoto"
@@ -65,6 +66,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorPrimaryDark"
+
+        ggg:fab_expand_direction="horizontal"
         >
       <com.ruialonso.library.FloatingActionButton
           android:id="@+id/btnQR"
@@ -86,6 +89,7 @@
           ggg:fab_title="sound"
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
+
 
   </com.ruialonso.library.FloatingActionsMenu>
 </RelativeLayout>

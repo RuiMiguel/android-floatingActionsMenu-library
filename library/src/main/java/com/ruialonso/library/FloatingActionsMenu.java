@@ -26,22 +26,22 @@ public class FloatingActionsMenu extends ViewGroup {
   public static final int EXPAND_ROUND = 5;
   public static final int EXPAND_FAN = 6;
 
-  private static final int ALIGNMENT_CENTER = 0;
-  private static final int ALIGNMENT_LEFT = 1;
-  private static final int ALIGNMENT_RIGHT = 2;
-  private static final int ALIGNMENT_TOP = 1;
-  private static final int ALIGNMENT_BOTTOM = 2;
+  public static final int ALIGNMENT_CENTER = 0;
+  public static final int ALIGNMENT_LEFT = 1;
+  public static final int ALIGNMENT_RIGHT = 2;
+  public static final int ALIGNMENT_TOP = 1;
+  public static final int ALIGNMENT_BOTTOM = 2;
 
+  public static final int ANIMATION_DURATION = 300;
+  public static final float FLIP_PLUS_ROTATION = 180f;
 
-  private static final int ANIMATION_DURATION = 300;
-  private static final float FLIP_PLUS_ROTATION = 180f;
+  private Point menuButtonCenter;
 
   private RotationDrawable rotationDrawable;
   private AnimatorSet flipAnimation;
 
   private FloatingActionMenuButton floatingActionMenuButton;
 
-  private int expandDirection;
   private int verticalAlignment;
   private int horizontalAlignment;
 
@@ -76,37 +76,38 @@ public class FloatingActionsMenu extends ViewGroup {
 
   private void init(AttributeSet attributeSet, int defStyle) {
     loadAttributes(attributeSet, defStyle);
-
   }
 
   private void loadAttributes(AttributeSet attributeSet, int defStyle) {
-    TypedArray attr =
+    TypedArray attrMenu =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsMenu, 0, 0);
 
-    expandDirection = attr.getInt(R.styleable.FloatingActionsMenu_fab_expandDirection, EXPAND_UP);
-    verticalAlignment = attr.getInt(R.styleable.FloatingActionsMenu_fab_vertical_alignment, ALIGNMENT_CENTER);
-    horizontalAlignment = attr.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
+    verticalAlignment =
+        attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_vertical_alignment, ALIGNMENT_CENTER);
+    horizontalAlignment =
+        attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
 
+
+    mAddButtonPlusColor = attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
+        getResources().getColor(android.R.color.white));
+    mAddButtonColorNormal = attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal,
+        getResources().getColor(android.R.color.holo_blue_dark));
+    mAddButtonColorPressed =
+        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorPressed,
+            getResources().getColor(android.R.color.holo_blue_light));
+    mAddButtonSize = attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_addButtonSize,
+        FloatingActionButton.SIZE_NORMAL);
+    mAddButtonStrokeVisible =
+        attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
 
 
     mTouchDelegateGroup = new TouchDelegateGroup(this);
     setTouchDelegate(mTouchDelegateGroup);
 
-    mAddButtonPlusColor = attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
-        getResources().getColor(android.R.color.white));
-    mAddButtonColorNormal = attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal,
-        getResources().getColor(android.R.color.holo_blue_dark));
-    mAddButtonColorPressed =
-        attr.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorPressed,
-            getResources().getColor(android.R.color.holo_blue_light));
-    mAddButtonSize = attr.getInt(R.styleable.FloatingActionsMenu_fab_addButtonSize,
-        FloatingActionButton.SIZE_NORMAL);
-    mAddButtonStrokeVisible =
-        attr.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
 
-    TypedArray attr2 =
+    TypedArray attrButton =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
-    mIconASV = attr2.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
+    mIconASV = attrButton.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
 
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -115,7 +116,9 @@ public class FloatingActionsMenu extends ViewGroup {
       mIconDrawableASV = getContext().getResources().getDrawable(mIconASV);
     }
 
-    attr.recycle();
+
+    attrMenu.recycle();
+    attrButton.recycle();
   }
 
   private void createFloatingActionMenuButton() {
@@ -182,7 +185,7 @@ public class FloatingActionsMenu extends ViewGroup {
   private void addDefaultSubmenuIfNeeded(List<FloatingActionButton> floatingActionButtonList) {
     if (floatingActionButtonList.size() > 0 && floatingActionsSubmenuList.size() == 0) {
       FloatingActionsSubmenu defaultActionSubmenu = new FloatingActionsSubmenu(getContext());
-      for(int i=0; i<floatingActionButtonList.size(); i++)
+      for (int i = 0; i < floatingActionButtonList.size(); i++)
         removeView(floatingActionButtonList.get(i));
 
       defaultActionSubmenu.addButtons(floatingActionButtonList);
@@ -200,8 +203,8 @@ public class FloatingActionsMenu extends ViewGroup {
   }
 
   private void initSubmenus() {
-    for (FloatingActionsSubmenu floatingActionsSubmenu: floatingActionsSubmenuList) {
-      floatingActionsSubmenu.setVisibility(INVISIBLE); //TO-DO: initialize visibility from attrs
+    for (FloatingActionsSubmenu floatingActionsSubmenu : floatingActionsSubmenuList) {
+      floatingActionsSubmenu.setVisibility(INVISIBLE);
     }
 
     if (floatingActionsSubmenuList.size() > 1) {
@@ -222,30 +225,14 @@ public class FloatingActionsMenu extends ViewGroup {
       final View child = getChildAt(i);
       if (child.getVisibility() == GONE) return;
 
-      measureChild(child, widthMeasureSpec, heightMeasureSpec);
+      child.measure(widthMeasureSpec, heightMeasureSpec);
 
-      switch (expandDirection) {
-        case EXPAND_UP:
-        case EXPAND_DOWN:
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          break;
-        case EXPAND_LEFT:
-        case EXPAND_RIGHT:
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          break;
-        case EXPAND_HORIZONTAL:
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          break;
-        case EXPAND_ROUND:
-        case EXPAND_FAN:
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          break;
-      }
-
-      maxWidth += Math.max(maxWidth, child.getMeasuredWidth());
-      maxHeight += Math.max(maxHeight, child.getMeasuredHeight());
+      maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
+      maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
     }
+
+    maxWidth += floatingActionMenuButton.getMeasuredWidth();
+    maxHeight += floatingActionMenuButton.getMeasuredHeight();
 
     // Report our final dimensions.
     setMeasuredDimension(maxWidth, maxHeight);
@@ -260,42 +247,77 @@ public class FloatingActionsMenu extends ViewGroup {
     final int menuRight = this.getMeasuredWidth() - this.getPaddingRight();
     final int menuBottom = this.getMeasuredHeight() - this.getPaddingBottom();
 
-    setRootLayout();
+    setRootLayout(menuLeft, menuTop, menuRight, menuBottom);
 
     for (int i = 0; i < count; i++) {
       View child = getChildAt(i);
-
-      setChildrenLayout(child, menuLeft, menuTop, menuRight, menuBottom);
+      if (child.getVisibility() != GONE) {
+        if (child == floatingActionMenuButton) {
+          setMenuButtonLayout(child, menuLeft, menuTop, menuRight, menuBottom);
+        } else {
+          setChildrenLayout(child, menuLeft, menuTop, menuRight, menuBottom);
+        }
+      }
     }
   }
 
-  private void setRootLayout() {
-    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)getLayoutParams();
+  private void setRootLayout(int left, int top, int right, int bottom) {
+    final int maxWidth = right - left;
+    final int maxHeight = bottom - top;
+
+    menuButtonCenter = new Point();
+
+    RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) getLayoutParams();
 
     switch (verticalAlignment) {
       case ALIGNMENT_CENTER:
         layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        menuButtonCenter.y = maxHeight / 2;
         break;
       case ALIGNMENT_TOP:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        menuButtonCenter.y = top + floatingActionMenuButton.getMeasuredHeight() / 2;
         break;
       case ALIGNMENT_BOTTOM:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        menuButtonCenter.y = bottom - floatingActionMenuButton.getMeasuredHeight() / 2;
         break;
     }
     switch (horizontalAlignment) {
       case ALIGNMENT_CENTER:
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        menuButtonCenter.x = maxWidth / 2;
         break;
       case ALIGNMENT_LEFT:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        menuButtonCenter.x = left + floatingActionMenuButton.getMeasuredWidth() / 2;
         break;
       case ALIGNMENT_RIGHT:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        menuButtonCenter.x = right - floatingActionMenuButton.getMeasuredWidth() / 2;
         break;
     }
 
     setLayoutParams(layoutParams);
+  }
+
+  private void setMenuButtonLayout(View child, int left, int top, int right, int bottom) {
+    int menuButtonWidth, menuButtonHeight, menuButtonLeft, menuButtonTop;
+    final int maxWidth = right - left;
+    final int maxHeight = bottom - top;
+
+    menuButtonLeft = menuButtonCenter.x - floatingActionMenuButton.getMeasuredWidth()/2;
+    menuButtonTop = menuButtonCenter.y - floatingActionMenuButton.getMeasuredHeight()/2;
+
+    //Get the maximum size of the child
+    child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+        MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+    menuButtonWidth = child.getMeasuredWidth();
+    menuButtonHeight = child.getMeasuredHeight();
+
+    //do the layout
+    child.layout(menuButtonLeft, menuButtonTop, menuButtonLeft + menuButtonWidth,
+        menuButtonTop + menuButtonHeight);
   }
 
   private void setChildrenLayout(View child, int left, int top, int right, int bottom) {
@@ -303,18 +325,12 @@ public class FloatingActionsMenu extends ViewGroup {
     final int maxWidth = right - left;
     final int maxHeight = bottom - top;
 
-    Point menuCenter = new Point();
-    menuCenter.x = maxWidth / 2;
-    menuCenter.y = maxHeight / 2;
-
-    if (child.getVisibility() == GONE) return;
-
     childLeft = left;
     childTop = top;
 
     switch (verticalAlignment) {
       case ALIGNMENT_CENTER:
-        childTop = menuCenter.y - child.getMeasuredHeight() / 2;
+        childTop = (maxHeight / 2) - (child.getMeasuredHeight() / 2);
         break;
       case ALIGNMENT_TOP:
         childTop = top;
@@ -323,37 +339,16 @@ public class FloatingActionsMenu extends ViewGroup {
         childTop = bottom - child.getMeasuredHeight();
         break;
     }
+
     switch (horizontalAlignment) {
       case ALIGNMENT_CENTER:
-        childLeft = menuCenter.x - child.getMeasuredWidth() / 2;
+        childLeft = (maxWidth / 2) - (child.getMeasuredWidth() / 2);
         break;
       case ALIGNMENT_LEFT:
         childLeft = left;
         break;
       case ALIGNMENT_RIGHT:
         childLeft = right - child.getMeasuredWidth();
-        break;
-    }
-
-    child.layout(childLeft, childTop, childLeft + child.getMeasuredWidth(),
-        childTop + child.getMeasuredHeight());
-
-    switch (expandDirection) {
-      case EXPAND_UP:
-
-        break;
-      case EXPAND_DOWN:
-
-        break;
-      case EXPAND_LEFT:
-        break;
-      case EXPAND_RIGHT:
-        break;
-      case EXPAND_HORIZONTAL:
-        break;
-      case EXPAND_ROUND:
-        break;
-      case EXPAND_FAN:
         break;
     }
 

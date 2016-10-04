@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
   <declare-styleable name="FloatingActionButton">
-    <attr name="fab_colorPressed"
-        format="color"/>
-    <attr name="fab_colorDisabled"
-        format="color"/>
-    <attr name="fab_colorNormal"
-        format="color"/>
-    <attr name="fab_icon"
-        format="reference"/>
-    <attr name="fab_size"
-        format="enum">
+    <attr format="color"
+        name="fab_colorPressed"/>
+    <attr format="color"
+        name="fab_colorDisabled"/>
+    <attr format="color"
+        name="fab_colorNormal"/>
+    <attr format="reference"
+        name="fab_icon"/>
+    <attr format="enum"
+        name="fab_size">
       <enum name="normal"
           value="0"/>
       <enum name="mini"
           value="1"/>
     </attr>
-    <attr name="fab_title"
-        format="string"/>
-    <attr name="fab_stroke_visible"
-        format="boolean"/>
+    <attr format="string"
+        name="fab_title"/>
+    <attr format="boolean"
+        name="fab_stroke_visible"/>
 
-    <attr name="ggg_icono"
-        format="reference"/>
+    <attr format="reference"
+        name="ggg_icono"/>
   </declare-styleable>
 
   <declare-styleable name="FloatingActionMenuButton">
-    <attr name="fab_plusIconColor"
-        format="color"/>
+    <attr format="color"
+        name="fab_plusIconColor"/>
   </declare-styleable>
 
   <declare-styleable name="FloatingActionsMenu">
-    <attr name="fab_vertical_alignment"
-        format="enum">
-    <enum name="center"
-        value="0"/>
-    <enum name="top"
-        value="1"/>
-    <enum name="bottom"
-        value="2"/>
+    <attr format="enum"
+        name="fab_vertical_alignment">
+      <enum name="center"
+          value="0"/>
+      <enum name="top"
+          value="1"/>
+      <enum name="bottom"
+          value="2"/>
     </attr>
-    <attr name="fab_horizontal_alignment"
-        format="enum">
+    <attr format="enum"
+        name="fab_horizontal_alignment">
       <enum name="center"
           value="0"/>
       <enum name="left"
@@ -51,33 +51,35 @@
     </attr>
 
 
-
-    <attr name="fab_addButtonColorPressed"
-        format="color"/>
-    <attr name="fab_addButtonColorNormal"
-        format="color"/>
-    <attr name="fab_addButtonSize"
-        format="enum">
+    <attr format="color"
+        name="fab_addButtonColorPressed"/>
+    <attr format="color"
+        name="fab_addButtonColorNormal"/>
+    <attr format="enum"
+        name="fab_addButtonSize">
       <enum name="normal"
           value="0"/>
       <enum name="mini"
           value="1"/>
     </attr>
-    <attr name="fab_addButtonPlusIconColor"
-        format="color"/>
-    <attr name="fab_addButtonStrokeVisible"
-        format="boolean"/>
-    <attr name="fab_labelStyle"
-        format="reference"/>
-    <attr name="fab_labelsPosition"
-        format="enum">
+    <attr format="color"
+        name="fab_addButtonPlusIconColor"/>
+    <attr format="boolean"
+        name="fab_addButtonStrokeVisible"/>
+    <attr format="reference"
+        name="fab_labelStyle"/>
+    <attr format="enum"
+        name="fab_labelsPosition">
       <enum name="left"
           value="0"/>
       <enum name="right"
           value="1"/>
     </attr>
-    <attr name="fab_expandDirection"
-        format="enum">
+  </declare-styleable>
+
+  <declare-styleable name="FloatingActionsSubmenu">
+    <attr format="enum"
+        name="fab_expand_direction">
       <enum name="up"
           value="0"/>
       <enum name="down"
@@ -86,6 +88,14 @@
           value="2"/>
       <enum name="right"
           value="3"/>
+      <enum name="horizontal"
+          value="4"/>
+      <enum name="round"
+          value="5"/>
+      <enum name="fan"
+          value="6"/>
     </attr>
+    <attr format="integer"
+        name="fab_button_spacing"/>
   </declare-styleable>
 </resources>
