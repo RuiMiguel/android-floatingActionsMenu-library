@@ -44,6 +44,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
   private OnFloatingActionSubmenuUpdateListener submenuUpdateListener;
 
+  //region constructor
   public FloatingActionsSubmenu(Context context) {
     super(context);
     init(null, 0);
@@ -58,6 +59,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
     super(context, attrs, defStyleAttr);
     init(attrs, defStyleAttr);
   }
+  //endregion
 
   private void init(AttributeSet attrs, int defStyle) {
     loadAttributes(attrs, defStyle);
@@ -112,9 +114,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
     menu.floatingActionMenuButton.setIconDrawable(submenuIcon);
   }
 
-  //childTop += floatingActionMenuButton.getMeasuredHeight();
-  //childLeft += floatingActionMenuButton.getMeasuredWidth();
-
   //region measure
   @Override protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     int count = getChildCount();
@@ -137,25 +136,21 @@ public class FloatingActionsSubmenu extends ViewGroup {
         case EXPAND_UP:
         case EXPAND_DOWN:
           maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          height += child.getMeasuredHeight();
           height += buttonSpacing * (getChildCount() - 1);
           height = adjustForOvershoot(height);
           break;
         case EXPAND_LEFT:
         case EXPAND_RIGHT:
-          width += child.getMeasuredWidth();
           width += buttonSpacing * (getChildCount() - 1);
           width = adjustForOvershoot(width);
           break;
         case EXPAND_ROUND:
         case EXPAND_FAN:
           maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          height += child.getMeasuredHeight();
           height += buttonSpacing * (getChildCount() - 1);
           height = adjustForOvershoot(height);
 
           maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          width += child.getMeasuredWidth();
           width += buttonSpacing * (getChildCount() - 1);
           width = adjustForOvershoot(width);
           break;

@@ -55,6 +55,7 @@ public class FloatingActionsMenu extends RelativeLayout {
   private TouchDelegateGroup mTouchDelegateGroup;
   private OnToggleListener onToggleListener;
 
+  //region constructor
   public FloatingActionsMenu(Context context) {
     super(context);
     init(null, 0);
@@ -69,6 +70,7 @@ public class FloatingActionsMenu extends RelativeLayout {
     super(context, attrs, defStyle);
     init(attrs, defStyle);
   }
+  //endregion
 
   private void init(AttributeSet attributeSet, int defStyle) {
     loadAttributes(attributeSet, defStyle);
