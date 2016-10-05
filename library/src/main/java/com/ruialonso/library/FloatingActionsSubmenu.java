@@ -3,6 +3,10 @@ package com.ruialonso.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,15 +24,17 @@ public class FloatingActionsSubmenu extends ViewGroup {
   public static final int EXPAND_DOWN = 1;
   public static final int EXPAND_LEFT = 2;
   public static final int EXPAND_RIGHT = 3;
-  public static final int EXPAND_HORIZONTAL = 4;
-  public static final int EXPAND_ROUND = 5;
-  public static final int EXPAND_FAN = 6;
+  public static final int EXPAND_ROUND = 4;
+  public static final int EXPAND_FAN = 5;
 
   public boolean isVisible = false;
 
   public boolean enableOverlay;
   private int expandDirection;
+  public String submenuGroup;
   private int buttonSpacing;
+  @DrawableRes private int submenuIconRes;
+  private Drawable submenuIcon;
 
   private int menuLeft;
   private int menuTop;
@@ -71,13 +77,25 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
     enableOverlay = attrSubmenu.getBoolean(R.styleable.FloatingActionsSubmenu_fab_enable_overlay, false);
     expandDirection = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, EXPAND_UP);
+    submenuGroup =
+        attrMenu.getString(R.styleable.FloatingActionsSubmenu_fab_submenu_group);
+
     buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing, 5);
+    submenuIconRes = attrSubmenu.getResourceId(R.styleable.FloatingActionsSubmenu_fab_submenu_icon, 0);
 
     attrSubmenu.recycle();
   }
 
   private void initViews() {
     floatingActionButtonItems = new ArrayList<>();
+
+    if (submenuIconRes != 0) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        submenuIcon = getContext().getDrawable(submenuIconRes);
+      } else {
+        submenuIcon = getContext().getResources().getDrawable(submenuIconRes);
+      }
+    }
   }
 
   @Override protected void onFinishInflate() {
@@ -90,6 +108,12 @@ public class FloatingActionsSubmenu extends ViewGroup {
         floatingActionButtonItems.add((FloatingActionButton) nextChild);
       }
     }
+  }
+
+  @Override protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    menu = (FloatingActionsMenu)getParent();
+    menu.floatingActionMenuButton.setIconDrawable(submenuIcon);
   }
 
   //childTop += floatingActionMenuButton.getMeasuredHeight();
@@ -123,12 +147,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
           break;
         case EXPAND_LEFT:
         case EXPAND_RIGHT:
-          width += child.getMeasuredWidth();
-          width += buttonSpacing * (getChildCount() - 1);
-          width = adjustForOvershoot(width);
-          break;
-        case EXPAND_HORIZONTAL:
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
           width += child.getMeasuredWidth();
           width += buttonSpacing * (getChildCount() - 1);
           width = adjustForOvershoot(width);
@@ -168,8 +186,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
     menuRight = this.getMeasuredWidth() - this.getPaddingRight();
     menuBottom = this.getMeasuredHeight() - this.getPaddingBottom();
 
-    menu = (FloatingActionsMenu)getParent();
-
     setRootLayout(menuLeft, menuTop, menuRight, menuBottom);
     setChildrenLayout(menuLeft, menuTop, menuRight, menuBottom);
   }
@@ -195,9 +211,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
         break;
       case EXPAND_RIGHT:
         layoutParams.setMargins(menu.floatingActionMenuButton.getMeasuredWidth(), 0, 0, 0);
-
-        break;
-      case EXPAND_HORIZONTAL:
 
         break;
       case EXPAND_ROUND:

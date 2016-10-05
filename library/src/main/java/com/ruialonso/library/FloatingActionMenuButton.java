@@ -11,6 +11,7 @@ import android.graphics.drawable.shapes.Shape;
 import android.util.AttributeSet;
 
 public class FloatingActionMenuButton extends FloatingActionButton {
+  private Drawable defaultIcon;
   int mPlusColor;
 
   public FloatingActionMenuButton(Context context) {
@@ -69,5 +70,9 @@ public class FloatingActionMenuButton extends FloatingActionButton {
     paint.setAntiAlias(true);
 
     return drawable;
+  }
+
+  public void setIconDrawable(Drawable submenuIcon) {
+
   }
 }

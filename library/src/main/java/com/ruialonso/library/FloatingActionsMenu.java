@@ -10,7 +10,6 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 import com.ruialonso.library.animation.RotationDrawable;
@@ -28,22 +27,23 @@ public class FloatingActionsMenu extends RelativeLayout {
   public static final float FLIP_PLUS_ROTATION = 180f;
 
   public Point menuButtonCenter;
-
-  private RotationDrawable rotationDrawable;
-  private AnimatorSet flipAnimation;
-
   public FloatingActionMenuButton floatingActionMenuButton;
 
   public int verticalAlignment;
   public int horizontalAlignment;
+  private boolean groupedSubmenus;
+
+  private RotationDrawable rotationDrawable;
+  private AnimatorSet flipAnimation;
 
   private int mAddButtonPlusColor;
   private int mAddButtonColorNormal;
   private int mAddButtonColorPressed;
   private int mAddButtonSize;
   private boolean mAddButtonStrokeVisible;
-  @DrawableRes private int mIconASV;
-  private Drawable mIconDrawableASV;
+
+  @DrawableRes private int menuIconRes;
+  private Drawable menuIcon;
 
   private int currentSubmenuIndex = -1;
   private List<FloatingActionsSubmenu> floatingActionsSubmenuList;
@@ -78,6 +78,9 @@ public class FloatingActionsMenu extends RelativeLayout {
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_vertical_alignment, ALIGNMENT_CENTER);
     horizontalAlignment =
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
+    groupedSubmenus =
+        attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_grouped_submenus, false);
+
 
     mAddButtonPlusColor =
         attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
@@ -98,12 +101,12 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     TypedArray attrButton =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
-    mIconASV = attrButton.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
+    menuIconRes = attrButton.getResourceId(R.styleable.FloatingActionButton_ggg_icono, 0);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      mIconDrawableASV = getContext().getDrawable(mIconASV);
+      menuIcon = getContext().getDrawable(menuIconRes);
     } else {
-      mIconDrawableASV = getContext().getResources().getDrawable(mIconASV);
+      menuIcon = getContext().getResources().getDrawable(menuIconRes);
     }
 
     attrMenu.recycle();
@@ -124,7 +127,7 @@ public class FloatingActionsMenu extends RelativeLayout {
       @Override Drawable getIconDrawable() {
 
         // final RotatingDrawable rotatingDrawable = new RotatingDrawable(super.getIconDrawable());
-        final RotationDrawable rotatingDrawable = new RotationDrawable(mIconDrawableASV);
+        final RotationDrawable rotatingDrawable = new RotationDrawable(menuIcon);
         rotationDrawable = rotatingDrawable;
 
         final OvershootInterpolator interpolator = new OvershootInterpolator();
@@ -213,12 +216,24 @@ public class FloatingActionsMenu extends RelativeLayout {
     // from their size.
     for (int i = 0; i < count; i++) {
       final View child = getChildAt(i);
+
       if (child.getVisibility() == GONE) return;
 
       child.measure(widthMeasureSpec, heightMeasureSpec);
 
-      maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
-      maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
+      int childHeight = child.getMeasuredHeight();
+      int childWidth = child.getMeasuredWidth();
+
+      if (verticalAlignment == ALIGNMENT_CENTER) {
+        childHeight *= 2;
+      }
+
+      if (horizontalAlignment == ALIGNMENT_CENTER) {
+        childWidth *= 2;
+      }
+
+      maxHeight = Math.max(maxHeight, childHeight);
+      maxWidth = Math.max(maxWidth, childWidth);
     }
 
     maxWidth += floatingActionMenuButton.getMeasuredWidth();
@@ -320,7 +335,8 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     switch (verticalAlignment) {
       case ALIGNMENT_CENTER:
-        childTop = (maxHeight / 2) - (child.getMeasuredHeight() / 2);
+        childTop = menuButtonCenter.y
+            - (child.getMeasuredHeight() / 2);
         break;
       case ALIGNMENT_TOP:
         childTop = top;
@@ -332,7 +348,8 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     switch (horizontalAlignment) {
       case ALIGNMENT_CENTER:
-        childLeft = (maxWidth / 2) - (child.getMeasuredWidth() / 2);
+        childLeft = menuButtonCenter.x
+            - (child.getMeasuredWidth() / 2);
         break;
       case ALIGNMENT_LEFT:
         childLeft = left;
@@ -410,16 +427,21 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void toggleMultipleSubmenu() {
-    floatingActionsSubmenuList.get(currentSubmenuIndex).collapse();
+    if(groupedSubmenus) {
 
-    if (currentSubmenuIndex < (floatingActionsSubmenuList.size() - 1)) {
-      currentSubmenuIndex++;
-    } else {
-      currentSubmenuIndex = 0;
     }
-    notifyMenuOverlayVisibility(floatingActionsSubmenuList.get(currentSubmenuIndex).enableOverlay);
+    else {
+      floatingActionsSubmenuList.get(currentSubmenuIndex).collapse();
 
-    floatingActionsSubmenuList.get(currentSubmenuIndex).expand();
+      if (currentSubmenuIndex < (floatingActionsSubmenuList.size() - 1)) {
+        currentSubmenuIndex++;
+      } else {
+        currentSubmenuIndex = 0;
+      }
+      notifyMenuOverlayVisibility(floatingActionsSubmenuList.get(currentSubmenuIndex).enableOverlay);
+
+      floatingActionsSubmenuList.get(currentSubmenuIndex).expand();
+    }
   }
 
   private void notifyMenuOverlayVisibility(boolean menuOverlayVisibility) {
