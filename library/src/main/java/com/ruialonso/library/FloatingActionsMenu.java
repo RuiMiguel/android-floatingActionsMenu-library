@@ -14,7 +14,10 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
 import com.ruialonso.library.animation.RotationDrawable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FloatingActionsMenu extends RelativeLayout {
   public static final int ALIGNMENT_CENTER = 0;
@@ -45,8 +48,9 @@ public class FloatingActionsMenu extends RelativeLayout {
   @DrawableRes private int menuIconRes;
   private Drawable menuIcon;
 
-  private int currentSubmenuIndex = -1;
-  private List<FloatingActionsSubmenu> floatingActionsSubmenuList;
+  private Map<String, GroupSubmenu> floatingActionsGroupSubmenuMap;
+  private int currentGroupSubmenuIndex = -1;
+  private List<GroupSubmenu> floatingActionsGroupSubmenuList;
 
   private TouchDelegateGroup mTouchDelegateGroup;
   private OnToggleListener onToggleListener;
@@ -80,7 +84,6 @@ public class FloatingActionsMenu extends RelativeLayout {
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
     groupedSubmenus =
         attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_grouped_submenus, false);
-
 
     mAddButtonPlusColor =
         attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
@@ -156,14 +159,28 @@ public class FloatingActionsMenu extends RelativeLayout {
   @Override protected void onFinishInflate() {
     super.onFinishInflate();
 
-    floatingActionsSubmenuList = new ArrayList<>();
+    floatingActionsGroupSubmenuList = new ArrayList<>();
+    floatingActionsGroupSubmenuMap = new LinkedHashMap<>();
     List<FloatingActionButton> floatingActionButtonList = new ArrayList<>();
 
     for (int i = 0; i < getChildCount(); i++) {
       Object child = getChildAt(i);
+
       if (child instanceof FloatingActionsSubmenu) {
-        floatingActionsSubmenuList.add((FloatingActionsSubmenu) child);
+        String groupName = ((FloatingActionsSubmenu) child).getSubmenuGroup();
+        if (groupName == null) {
+          groupName = Integer.toString(((FloatingActionsSubmenu)child).getId());
+        }
+
+        GroupSubmenu groupSubmenu = floatingActionsGroupSubmenuMap.get(groupName);
+        if (groupSubmenu == null) {
+          groupSubmenu = new GroupSubmenu();
+          groupSubmenu.setGroupName(groupName);
+        }
+        groupSubmenu.add((FloatingActionsSubmenu) child);
+        floatingActionsGroupSubmenuMap.put(groupName, groupSubmenu);
       }
+
       if (child instanceof FloatingActionButton) {
         floatingActionButtonList.add((FloatingActionButton) child);
       }
@@ -175,7 +192,8 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void addDefaultSubmenuIfNeeded(List<FloatingActionButton> floatingActionButtonList) {
-    if (floatingActionButtonList.size() > 0 && floatingActionsSubmenuList.size() == 0) {
+    if (floatingActionButtonList.size() > 0
+        && floatingActionsGroupSubmenuMap.values().size() == 0) {
       FloatingActionsSubmenu defaultActionSubmenu = new FloatingActionsSubmenu(getContext());
       for (int i = 0; i < floatingActionButtonList.size(); i++)
         removeView(floatingActionButtonList.get(i));
@@ -195,13 +213,15 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void initSubmenus() {
-    for (FloatingActionsSubmenu floatingActionsSubmenu : floatingActionsSubmenuList) {
-      floatingActionsSubmenu.setVisibility(INVISIBLE);
+    resetGroupSubmenuList(floatingActionsGroupSubmenuMap.values());
+
+    for (GroupSubmenu groupSubmenu : floatingActionsGroupSubmenuList) {
+      groupSubmenu.collapse();
     }
 
-    if (floatingActionsSubmenuList.size() > 1) {
-      currentSubmenuIndex = 0;
-      floatingActionsSubmenuList.get(0).setVisibility(VISIBLE);
+    if (!isAloneSubmenu()) {
+      currentGroupSubmenuIndex = 0;
+      floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).expand();
     }
   }
 
@@ -225,11 +245,11 @@ public class FloatingActionsMenu extends RelativeLayout {
       int childWidth = child.getMeasuredWidth();
 
       if (verticalAlignment == ALIGNMENT_CENTER) {
-        childHeight *= 2;
+        //childHeight *= 2;
       }
 
       if (horizontalAlignment == ALIGNMENT_CENTER) {
-        childWidth *= 2;
+        //childWidth *= 2;
       }
 
       maxHeight = Math.max(maxHeight, childHeight);
@@ -335,8 +355,7 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     switch (verticalAlignment) {
       case ALIGNMENT_CENTER:
-        childTop = menuButtonCenter.y
-            - (child.getMeasuredHeight() / 2);
+        childTop = menuButtonCenter.y - (child.getMeasuredHeight() / 2);
         break;
       case ALIGNMENT_TOP:
         childTop = top;
@@ -348,8 +367,7 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     switch (horizontalAlignment) {
       case ALIGNMENT_CENTER:
-        childLeft = menuButtonCenter.x
-            - (child.getMeasuredWidth() / 2);
+        childLeft = menuButtonCenter.x - (child.getMeasuredWidth() / 2);
         break;
       case ALIGNMENT_LEFT:
         childLeft = left;
@@ -371,14 +389,24 @@ public class FloatingActionsMenu extends RelativeLayout {
   //endregion
 
   //region Add/Remove submenus
-  public boolean addSubmenu(FloatingActionsSubmenu floatingActionsSubmenu) {
-    boolean added;
-    if (this.floatingActionsSubmenuList == null) {
-      this.floatingActionsSubmenuList = new ArrayList<>();
+  private void resetGroupSubmenuList(Collection<GroupSubmenu> values) {
+    floatingActionsGroupSubmenuList = new ArrayList<>();
+    floatingActionsGroupSubmenuList.addAll(values);
+  }
+
+  public void addSubmenu(FloatingActionsSubmenu floatingActionsSubmenu) {
+    String groupName = floatingActionsSubmenu.getSubmenuGroup();
+    GroupSubmenu groupSubmenu =
+        floatingActionsGroupSubmenuMap.get(groupName);
+    if (groupSubmenu == null) {
+      groupSubmenu = new GroupSubmenu();
+      groupSubmenu.setGroupName(groupName);
     }
-    added = floatingActionsSubmenuList.add(floatingActionsSubmenu);
-    if (added) addView(floatingActionsSubmenu);
-    return added;
+    groupSubmenu.add(floatingActionsSubmenu);
+    floatingActionsGroupSubmenuMap.put(groupName, groupSubmenu);
+
+    resetGroupSubmenuList(floatingActionsGroupSubmenuMap.values());
+    addView(floatingActionsSubmenu);
   }
 
   public void addSubmenus(List<FloatingActionsSubmenu> floatingActionsSubmenuItems) {
@@ -389,10 +417,24 @@ public class FloatingActionsMenu extends RelativeLayout {
 
   public boolean removeSubmenu(FloatingActionsSubmenu floatingActionsSubmenu) {
     boolean removed = false;
-    if (this.floatingActionsSubmenuList != null) {
-      removed = this.floatingActionsSubmenuList.remove(floatingActionsSubmenu);
-      if (removed) removeView(floatingActionsSubmenu);
+    String groupName = floatingActionsSubmenu.getSubmenuGroup();
+    GroupSubmenu groupSubmenu =
+        floatingActionsGroupSubmenuMap.get(groupName);
+    if (groupSubmenu != null) {
+      groupSubmenu.remove(floatingActionsSubmenu);
+      if (groupSubmenu.isEmpty()) {
+        floatingActionsGroupSubmenuMap.remove(groupName);
+      } else {
+        floatingActionsGroupSubmenuMap.put(groupName, groupSubmenu);
+      }
+      removed = true;
     }
+
+    if (removed) {
+      resetGroupSubmenuList(floatingActionsGroupSubmenuMap.values());
+      removeView(floatingActionsSubmenu);
+    }
+
     return removed;
   }
   //endregion
@@ -407,41 +449,36 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private boolean isAloneSubmenu() {
-    return floatingActionsSubmenuList.size() == 1;
+    return (floatingActionsGroupSubmenuList.size() == 1) && (floatingActionsGroupSubmenuList.get(0).size() == 1);
   }
 
   private void toggleAloneSubmenu() {
     if (isAloneSubmenuVisible()) {
-      floatingActionsSubmenuList.get(currentSubmenuIndex).collapse();
-      currentSubmenuIndex = -1;
+      floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).collapse();
+      currentGroupSubmenuIndex = -1;
       notifyMenuOverlayVisibility(false);
     } else {
-      currentSubmenuIndex = 0;
-      floatingActionsSubmenuList.get(currentSubmenuIndex).expand();
+      currentGroupSubmenuIndex = 0;
+      floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).expand();
       notifyMenuOverlayVisibility(true);
     }
   }
 
   private boolean isAloneSubmenuVisible() {
-    return isAloneSubmenu() && (currentSubmenuIndex == 0);
+    return isAloneSubmenu() && (currentGroupSubmenuIndex == 0);
   }
 
   private void toggleMultipleSubmenu() {
-    if(groupedSubmenus) {
+    floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).collapse();
 
+    if (currentGroupSubmenuIndex < (floatingActionsGroupSubmenuList.size() - 1)) {
+      currentGroupSubmenuIndex++;
+    } else {
+      currentGroupSubmenuIndex = 0;
     }
-    else {
-      floatingActionsSubmenuList.get(currentSubmenuIndex).collapse();
+    notifyMenuOverlayVisibility(floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).isOverlayEnabled());
 
-      if (currentSubmenuIndex < (floatingActionsSubmenuList.size() - 1)) {
-        currentSubmenuIndex++;
-      } else {
-        currentSubmenuIndex = 0;
-      }
-      notifyMenuOverlayVisibility(floatingActionsSubmenuList.get(currentSubmenuIndex).enableOverlay);
-
-      floatingActionsSubmenuList.get(currentSubmenuIndex).expand();
-    }
+    floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).expand();
   }
 
   private void notifyMenuOverlayVisibility(boolean menuOverlayVisibility) {

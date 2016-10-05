@@ -2,15 +2,12 @@ package com.ruialonso.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.IdRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +26,9 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
   public boolean isVisible = false;
 
-  public boolean enableOverlay;
+  private boolean enableOverlay;
   private int expandDirection;
-  public String submenuGroup;
+  private String submenuGroup;
   private int buttonSpacing;
   @DrawableRes private int submenuIconRes;
   private Drawable submenuIcon;
@@ -69,19 +66,18 @@ public class FloatingActionsSubmenu extends ViewGroup {
   }
 
   private void loadAttributes(AttributeSet attributeSet, int defStyle) {
-    TypedArray attrMenu =
-        getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsMenu, 0, 0);
-
     TypedArray attrSubmenu =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionsSubmenu, 0, 0);
 
-    enableOverlay = attrSubmenu.getBoolean(R.styleable.FloatingActionsSubmenu_fab_enable_overlay, false);
-    expandDirection = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, EXPAND_UP);
-    submenuGroup =
-        attrMenu.getString(R.styleable.FloatingActionsSubmenu_fab_submenu_group);
+    enableOverlay =
+        attrSubmenu.getBoolean(R.styleable.FloatingActionsSubmenu_fab_enable_overlay, false);
+    expandDirection =
+        attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, EXPAND_UP);
+    submenuGroup = attrSubmenu.getString(R.styleable.FloatingActionsSubmenu_fab_submenu_group);
 
     buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing, 5);
-    submenuIconRes = attrSubmenu.getResourceId(R.styleable.FloatingActionsSubmenu_fab_submenu_icon, 0);
+    submenuIconRes =
+        attrSubmenu.getResourceId(R.styleable.FloatingActionsSubmenu_fab_submenu_icon, 0);
 
     attrSubmenu.recycle();
   }
@@ -112,7 +108,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
-    menu = (FloatingActionsMenu)getParent();
+    menu = (FloatingActionsMenu) getParent();
     menu.floatingActionMenuButton.setIconDrawable(submenuIcon);
   }
 
@@ -314,7 +310,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
       isVisible = true;
 
       setVisibility(VISIBLE);
-      //TO-DO: show floating action buttons with animation
+      //TO-DO: expand floating action buttons with animation
       for (FloatingActionButton floatingActionButton : floatingActionButtonItems) {
       }
 
@@ -329,7 +325,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
       isVisible = false;
 
       setVisibility(INVISIBLE);
-      //TO-DO: hide floating action buttons with animation
+      //TO-DO: collapse floating action buttons with animation
       for (FloatingActionButton floatingActionButton : floatingActionButtonItems) {
       }
 
@@ -348,6 +344,14 @@ public class FloatingActionsSubmenu extends ViewGroup {
     super.setVisibility(visibility);
   }
   //endregion
+
+  public String getSubmenuGroup() {
+    return submenuGroup;
+  }
+
+  public boolean isEnableOverlay() {
+    return enableOverlay;
+  }
 
   public void setOnFloatingActionSubmenuUpdateListener(
       OnFloatingActionSubmenuUpdateListener listener) {

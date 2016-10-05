@@ -35,6 +35,7 @@
 
       android:background="@color/colorAccent"
       ggg:fab_addButtonColorNormal="@android:color/transparent"
+      ggg:fab_grouped_submenus="true"
 
       ggg:fab_addButtonColorPressed="@android:color/transparent"
       ggg:fab_addButtonPlusIconColor="@android:color/transparent"
