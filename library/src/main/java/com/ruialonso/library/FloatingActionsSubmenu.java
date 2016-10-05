@@ -112,6 +112,43 @@ public class FloatingActionsSubmenu extends ViewGroup {
     super.onAttachedToWindow();
     menu = (FloatingActionsMenu) getParent();
     menu.floatingActionMenuButton.setIconDrawable(submenuIcon);
+
+    validateAttributes();
+  }
+
+  private void validateAttributes() {
+    switch (menu.verticalAlignment) {
+      case FloatingActionsMenu.ALIGNMENT_CENTER:
+        break;
+      case FloatingActionsMenu.ALIGNMENT_TOP:
+        if (expandDirection == EXPAND_UP) {
+          throw new IllegalArgumentException("Menu alignment top cannot support submenu expand up");
+        }
+        break;
+      case FloatingActionsMenu.ALIGNMENT_BOTTOM:
+        if (expandDirection == EXPAND_DOWN) {
+          throw new IllegalArgumentException(
+              "Menu alignment bottom cannot support submenu expand down");
+        }
+        break;
+    }
+
+    switch (menu.horizontalAlignment) {
+      case FloatingActionsMenu.ALIGNMENT_CENTER:
+        break;
+      case FloatingActionsMenu.ALIGNMENT_LEFT:
+        if (expandDirection == EXPAND_LEFT) {
+          throw new IllegalArgumentException(
+              "Menu alignment left cannot support submenu expand left");
+        }
+        break;
+      case FloatingActionsMenu.ALIGNMENT_RIGHT:
+        if (expandDirection == EXPAND_RIGHT) {
+          throw new IllegalArgumentException(
+              "Menu alignment right cannot support submenu expand right");
+        }
+        break;
+    }
   }
 
   //region measure
@@ -189,18 +226,21 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
     switch (expandDirection) {
       case EXPAND_UP:
-        layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+        layoutParams.addRule(RelativeLayout.ABOVE, R.id.fab_menu_button);
         layoutParams.setMargins(0, 0, 0, menu.floatingActionMenuButton.getMeasuredHeight());
         break;
       case EXPAND_DOWN:
+        layoutParams.addRule(RelativeLayout.BELOW, R.id.fab_menu_button);
         layoutParams.setMargins(0, menu.floatingActionMenuButton.getMeasuredHeight(), 0, 0);
 
         break;
       case EXPAND_LEFT:
+        layoutParams.addRule(RelativeLayout.ALIGN_LEFT, R.id.fab_menu_button);
         layoutParams.setMargins(0, 0, menu.floatingActionMenuButton.getMeasuredWidth(), 0);
 
         break;
       case EXPAND_RIGHT:
+        layoutParams.addRule(RelativeLayout.ALIGN_RIGHT, R.id.fab_menu_button);
         layoutParams.setMargins(menu.floatingActionMenuButton.getMeasuredWidth(), 0, 0, 0);
 
         break;

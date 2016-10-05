@@ -147,7 +147,7 @@ public class FloatingActionsMenu extends RelativeLayout {
       }
     };
 
-    floatingActionMenuButton.setId(R.id.fab_expand_menu_button);
+    floatingActionMenuButton.setId(R.id.fab_menu_button);
     floatingActionMenuButton.setSize(mAddButtonSize);
     floatingActionMenuButton.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
