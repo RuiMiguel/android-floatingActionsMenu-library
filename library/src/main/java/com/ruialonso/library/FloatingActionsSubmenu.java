@@ -8,7 +8,6 @@ import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,9 +77,12 @@ public class FloatingActionsSubmenu extends ViewGroup {
         attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_expand_direction, EXPAND_UP);
     submenuGroup = attrSubmenu.getString(R.styleable.FloatingActionsSubmenu_fab_submenu_group);
 
-    radius = attrSubmenu.getDimensionPixelSize(R.styleable.FloatingActionsSubmenu_fab_submenu_radius, getResources().getDimensionPixelSize(R.dimen.fab_submenu_default_radius));
+    radius =
+        attrSubmenu.getDimensionPixelSize(R.styleable.FloatingActionsSubmenu_fab_submenu_radius,
+            getResources().getDimensionPixelSize(R.dimen.fab_submenu_default_radius));
 
-    buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing, getResources().getDimensionPixelSize(R.dimen.fab_button_default_spacing));
+    buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing,
+        getResources().getDimensionPixelSize(R.dimen.fab_button_default_spacing));
 
     submenuIconRes =
         attrSubmenu.getResourceId(R.styleable.FloatingActionsSubmenu_fab_submenu_icon, 0);
@@ -161,59 +163,105 @@ public class FloatingActionsSubmenu extends ViewGroup {
     // Measurement will ultimately be computing these values.
     int maxHeight = 0;
     int maxWidth = 0;
-    int width;
-    int height;
+    int width = 0;
+    int height = 0;
 
-    for (int i = 0; i < count; i++) {
-      final View child = getChildAt(i);
+    switch (expandDirection) {
+      case EXPAND_UP:
+      case EXPAND_DOWN:
+        for (int i = 0; i < count; i++) {
+          final View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+          child.measure(widthMeasureSpec, heightMeasureSpec);
 
-      if (child.getVisibility() == GONE) return;
+          maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
+          height += child.getMeasuredHeight();
+        }
+        height += buttonSpacing * (getChildCount() - 1);
+        //height = adjustForOvershoot(height);
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
+        break;
+      case EXPAND_LEFT:
+      case EXPAND_RIGHT:
+        for (int i = 0; i < count; i++) {
+          final View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+          child.measure(widthMeasureSpec, heightMeasureSpec);
 
-      child.measure(widthMeasureSpec, heightMeasureSpec);
-      width = child.getMeasuredWidth();
-      height = child.getMeasuredHeight();
+          maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
+          width += child.getMeasuredWidth();
+        }
 
-      switch (expandDirection) {
-        case EXPAND_UP:
-        case EXPAND_DOWN:
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          height += buttonSpacing * (getChildCount() - 1);
-          height = adjustForOvershoot(height);
-          break;
-        case EXPAND_LEFT:
-        case EXPAND_RIGHT:
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          width += buttonSpacing * (getChildCount() - 1);
-          width = adjustForOvershoot(width);
-          break;
-        case EXPAND_ROUND:
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          height += menu.floatingActionMenuButton.getMeasuredHeight();
-          height += buttonSpacing * (getChildCount() - 1);
-          height += 2*radius;
-          height = adjustForOvershoot(height);
+        width += buttonSpacing * (getChildCount() - 1);
+        //width = adjustForOvershoot(width);
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
+        break;
+      case EXPAND_ROUND:
+        for (int i = 0; i < count; i++) {
+          final View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+          child.measure(widthMeasureSpec, heightMeasureSpec);
 
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          width += menu.floatingActionMenuButton.getMeasuredWidth();
-          width += buttonSpacing * (getChildCount() - 1);
-          width += 2*radius;
-          width = adjustForOvershoot(width);
-          break;
-        case EXPAND_FAN:
-          maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-          height += menu.floatingActionMenuButton.getMeasuredHeight();
+          maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
+          maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
+        }
+
+        height += menu.floatingActionMenuButton.getMeasuredHeight();
+        height += 2 * maxHeight;
+        height += 2 * buttonSpacing;
+        height += 2 * radius;
+        //height = adjustForOvershoot(height);
+
+        width += menu.floatingActionMenuButton.getMeasuredWidth();
+        width += 2 * maxWidth;
+        width += 2 * buttonSpacing;
+        width += 2 * radius;
+        //width = adjustForOvershoot(width);
+
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
+        break;
+      case EXPAND_FAN:
+        for (int i = 0; i < count; i++) {
+          final View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+          child.measure(widthMeasureSpec, heightMeasureSpec);
+
+          maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
+          maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
+        }
+
+        height += menu.floatingActionMenuButton.getMeasuredHeight();
+        if (menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_TOP
+            || menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_BOTTOM) {
+          height += maxHeight;
+          height += buttonSpacing;
           height += radius;
-          height = adjustForOvershoot(height);
+        } else {
+          height += 2 * maxHeight;
+          height += 2 * buttonSpacing;
+          height += 2 * radius;
+        }
+        //height = adjustForOvershoot(height);
 
-          maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-          width += menu.floatingActionMenuButton.getMeasuredWidth();
-          width += 2*radius;
-          width = adjustForOvershoot(width);
-          break;
-      }
+        width += menu.floatingActionMenuButton.getMeasuredWidth();
+        if (menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_LEFT
+            || menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_RIGHT) {
+          width += maxWidth;
+          width += buttonSpacing;
+          width += radius;
+        } else {
+          width += 2 * maxWidth;
+          width += 2 * buttonSpacing;
+          width += 2 * radius;
+        }
+        //width = adjustForOvershoot(width);
 
-      maxWidth = Math.max(maxWidth, width);
-      maxHeight = Math.max(maxHeight, height);
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
+        break;
     }
 
     // Report our final dimensions.
@@ -239,52 +287,100 @@ public class FloatingActionsSubmenu extends ViewGroup {
     final int maxWidth = menuRight - menuLeft;
     final int maxHeight = menuBottom - menuTop;
 
-    int nextX = menuLeft;
-    int nextY = menuTop;
+    int nextX;
+    int nextY;
 
-    for (int i = 0; i < count; i++) {
-      View child = getChildAt(i);
-      if (child.getVisibility() == GONE) return;
+    switch (expandDirection) {
+      case EXPAND_UP:
+        nextY = menuBottom;
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
 
-      childLeft = nextX;
-      childTop = nextY;
+          childLeft = maxWidth / 2 - child.getMeasuredWidth() / 2;
+          childTop = nextY - child.getMeasuredHeight();
 
-      /*
-      switch (expandDirection) {
-        case FloatingActionsMenu.EXPAND_UP:
-          childTop -= child.getMeasuredHeight();
-          nextY = childTop - buttonSpacing;
-          break;
-        case FloatingActionsMenu.EXPAND_DOWN:
-          childTop = top;
-          nextY = childTop + buttonSpacing;
-          break;
-        case FloatingActionsMenu.EXPAND_LEFT:
-          childLeft -= child.getMeasuredWidth();
-          nextX = childLeft - buttonSpacing;
-          break;
-        case FloatingActionsMenu.EXPAND_RIGHT:
-          childLeft = left;
-          nextX = childLeft + buttonSpacing;
-          break;
-        case FloatingActionsMenu.EXPAND_HORIZONTAL:
+          //Get the maximum size of the child
+          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+          childWidth = child.getMeasuredWidth();
+          childHeight = child.getMeasuredHeight();
 
-          break;
-        case FloatingActionsMenu.EXPAND_ROUND:
-        case FloatingActionsMenu.EXPAND_FAN:
+          //do the layout
+          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
 
-          break;
-      }
-      */
+          nextY -= childTop - buttonSpacing;
+        }
+        break;
+      case EXPAND_DOWN:
+        nextY = menuTop;
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
 
-      //Get the maximum size of the child
-      child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-          MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-      childWidth = child.getMeasuredWidth();
-      childHeight = child.getMeasuredHeight();
+          childLeft = maxWidth / 2 - child.getMeasuredWidth() / 2;
+          childTop = nextY + child.getMeasuredHeight();
 
-      //do the layout
-      child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+          //Get the maximum size of the child
+          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+          childWidth = child.getMeasuredWidth();
+          childHeight = child.getMeasuredHeight();
+
+          //do the layout
+          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+
+          nextY += childTop + buttonSpacing;
+        }
+        break;
+      case EXPAND_LEFT:
+        nextX = menuRight;
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+
+          childLeft = nextX - child.getMeasuredWidth();
+          childTop = maxHeight / 2 - child.getMeasuredHeight() / 2;
+
+          //Get the maximum size of the child
+          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+          childWidth = child.getMeasuredWidth();
+          childHeight = child.getMeasuredHeight();
+
+          //do the layout
+          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+
+          nextX -= childLeft - buttonSpacing;
+        }
+        break;
+      case EXPAND_RIGHT:
+        nextX = menuLeft;
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+
+          childLeft = nextX + child.getMeasuredWidth();
+          childTop = maxHeight / 2 - child.getMeasuredHeight() / 2;
+
+          //Get the maximum size of the child
+          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+          childWidth = child.getMeasuredWidth();
+          childHeight = child.getMeasuredHeight();
+
+          //do the layout
+          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+
+          nextX += childLeft + buttonSpacing;
+        }
+        break;
+      case EXPAND_ROUND:
+
+        break;
+      case EXPAND_FAN:
+
+        break;
     }
   }
   //endregion

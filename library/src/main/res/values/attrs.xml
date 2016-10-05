@@ -18,8 +18,6 @@
       <enum name="right"
           value="2"/>
     </attr>
-    <attr format="boolean"
-        name="fab_grouped_submenus"/>
 
     <attr format="enum"
         name="fab_addButtonSize">

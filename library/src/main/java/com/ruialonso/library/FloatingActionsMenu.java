@@ -34,7 +34,6 @@ public class FloatingActionsMenu extends RelativeLayout {
 
   public int verticalAlignment;
   public int horizontalAlignment;
-  private boolean groupedSubmenus;
 
   private RotationDrawable rotationDrawable;
   private AnimatorSet flipAnimation;
@@ -84,8 +83,6 @@ public class FloatingActionsMenu extends RelativeLayout {
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_vertical_alignment, ALIGNMENT_CENTER);
     horizontalAlignment =
         attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_horizontal_alignment, ALIGNMENT_CENTER);
-    groupedSubmenus =
-        attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_grouped_submenus, false);
 
     mAddButtonPlusColor =
         attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
@@ -360,11 +357,11 @@ public class FloatingActionsMenu extends RelativeLayout {
         childTop = menuButtonCenter.y - (child.getMeasuredHeight() / 2);
         if (((FloatingActionsSubmenu) child).getExpandDirection()
             == FloatingActionsSubmenu.EXPAND_DOWN) {
-          childTop += floatingActionMenuButton.getMeasuredHeight();
+          childTop += 3*floatingActionMenuButton.getMeasuredHeight()/2;
         }
         if (((FloatingActionsSubmenu) child).getExpandDirection()
             == FloatingActionsSubmenu.EXPAND_UP) {
-          childTop -= floatingActionMenuButton.getMeasuredHeight();
+          childTop -= 3*floatingActionMenuButton.getMeasuredHeight()/2;
         }
         break;
       case ALIGNMENT_TOP:
@@ -388,11 +385,11 @@ public class FloatingActionsMenu extends RelativeLayout {
         childLeft = menuButtonCenter.x - (child.getMeasuredWidth() / 2);
         if (((FloatingActionsSubmenu) child).getExpandDirection()
             == FloatingActionsSubmenu.EXPAND_RIGHT) {
-          childLeft += floatingActionMenuButton.getMeasuredWidth();
+          childLeft += 3*floatingActionMenuButton.getMeasuredWidth()/2;
         }
         if (((FloatingActionsSubmenu) child).getExpandDirection()
             == FloatingActionsSubmenu.EXPAND_LEFT) {
-          childLeft -= floatingActionMenuButton.getMeasuredWidth();
+          childLeft -= 3*floatingActionMenuButton.getMeasuredWidth()/2;
         }
         break;
       case ALIGNMENT_LEFT:
