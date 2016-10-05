@@ -10,8 +10,7 @@
       <enum name="bottom"
           value="2"/>
     </attr>
-    <attr format="enum"
-        name="fab_horizontal_alignment">
+    <attr format="enum" name="fab_horizontal_alignment">
       <enum name="center"
           value="0"/>
       <enum name="left"
@@ -22,10 +21,6 @@
     <attr format="boolean"
         name="fab_grouped_submenus"/>
 
-    <attr format="color"
-        name="fab_addButtonColorPressed"/>
-    <attr format="color"
-        name="fab_addButtonColorNormal"/>
     <attr format="enum"
         name="fab_addButtonSize">
       <enum name="normal"
@@ -33,6 +28,11 @@
       <enum name="mini"
           value="1"/>
     </attr>
+
+    <attr format="color"
+        name="fab_addButtonColorPressed"/>
+    <attr format="color"
+        name="fab_addButtonColorNormal"/>
     <attr format="color"
         name="fab_addButtonPlusIconColor"/>
     <attr format="boolean"
@@ -71,6 +71,8 @@
     </attr>
     <attr format="integer"
         name="fab_button_spacing"/>
+    <attr format="dimension"
+        name="fab_submenu_radius"/>
     <attr format="boolean"
         name="fab_enable_overlay"/>
     <attr format="reference"

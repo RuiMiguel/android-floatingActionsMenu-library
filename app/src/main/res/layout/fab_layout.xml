@@ -81,6 +81,7 @@
 
         ggg:fab_enable_overlay="true"
         ggg:fab_expand_direction="fan"
+        ggg:fab_submenu_radius="30dp"
         ggg:fab_submenu_icon="@android:drawable/ic_menu_always_landscape_portrait"
         >
       <com.ruialonso.library.FloatingActionButton
@@ -120,6 +121,7 @@
 
         ggg:fab_enable_overlay="false"
         ggg:fab_expand_direction="left"
+        ggg:fab_submenu_group="horizontal"
         >
       <com.ruialonso.library.FloatingActionButton
           android:id="@+id/btn_action6"
@@ -129,6 +131,7 @@
           ggg:fab_colorPressed="@android:color/holo_red_dark"
           ggg:fab_icon="@android:drawable/ic_menu_compass"
           ggg:fab_title="photo"
+          ggg:fab_size="mini"
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
 
@@ -140,6 +143,7 @@
 
         ggg:fab_enable_overlay="true"
         ggg:fab_expand_direction="right"
+        ggg:fab_submenu_group="horizontal"
         >
       <com.ruialonso.library.FloatingActionButton
           android:id="@+id/btn_action7"
@@ -149,6 +153,7 @@
           ggg:fab_colorPressed="@android:color/holo_red_dark"
           ggg:fab_icon="@android:drawable/ic_menu_compass"
           ggg:fab_title="photo"
+          ggg:fab_size="mini"
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
 
