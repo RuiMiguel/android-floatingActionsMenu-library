@@ -319,7 +319,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           if (child.getVisibility() == GONE) return;
 
           childLeft = maxWidth / 2 - child.getMeasuredWidth() / 2;
-          childTop = nextY + child.getMeasuredHeight();
+          childTop = nextY;
 
           //Get the maximum size of the child
           child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
@@ -330,7 +330,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           //do the layout
           child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
 
-          nextY += childTop + buttonSpacing;
+          nextY += childTop + child.getMeasuredHeight() + buttonSpacing;
         }
         break;
       case EXPAND_LEFT:
@@ -360,7 +360,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           View child = getChildAt(i);
           if (child.getVisibility() == GONE) return;
 
-          childLeft = nextX + child.getMeasuredWidth();
+          childLeft = nextX;
           childTop = maxHeight / 2 - child.getMeasuredHeight() / 2;
 
           //Get the maximum size of the child
@@ -372,7 +372,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           //do the layout
           child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
 
-          nextX += childLeft + buttonSpacing;
+          nextX += childLeft + child.getMeasuredWidth() + buttonSpacing;
         }
         break;
       case EXPAND_ROUND:

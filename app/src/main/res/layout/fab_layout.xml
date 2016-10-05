@@ -41,7 +41,7 @@
       ggg:fab_colorNormal="@android:color/transparent"
       ggg:fab_colorPressed="@android:color/transparent"
       ggg:fab_horizontal_alignment="center"
-      ggg:fab_vertical_alignment="center"
+      ggg:fab_vertical_alignment="bottom"
       ggg:ggg_icono="@android:drawable/ic_menu_gallery"
       >
 
@@ -175,33 +175,5 @@
           ggg:fab_size="mini"
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
-
-    <com.ruialonso.library.FloatingActionsSubmenu
-        android:id="@+id/floating_actions_submenu5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_orange_dark"
-        ggg:fab_expand_direction="down"
-        >
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/btn_action10"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          ggg:fab_colorNormal="@android:color/holo_red_light"
-          ggg:fab_colorPressed="@android:color/holo_red_dark"
-          ggg:fab_icon="@android:drawable/ic_menu_compass"
-          ggg:fab_title="photo"
-          />
-      <com.ruialonso.library.FloatingActionButton
-          android:id="@+id/btn_action11"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          ggg:fab_colorNormal="@android:color/holo_red_light"
-          ggg:fab_colorPressed="@android:color/holo_red_dark"
-          ggg:fab_icon="@android:drawable/ic_menu_compass"
-          ggg:fab_title="photo"
-          />
-    </com.ruialonso.library.FloatingActionsSubmenu>
-
   </com.ruialonso.library.FloatingActionsMenu>
 </RelativeLayout>
