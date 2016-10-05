@@ -1,35 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <declare-styleable name="FloatingActionButton">
-    <attr format="color"
-        name="fab_colorPressed"/>
-    <attr format="color"
-        name="fab_colorDisabled"/>
-    <attr format="color"
-        name="fab_colorNormal"/>
-    <attr format="reference"
-        name="fab_icon"/>
-    <attr format="enum"
-        name="fab_size">
-      <enum name="normal"
-          value="0"/>
-      <enum name="mini"
-          value="1"/>
-    </attr>
-    <attr format="string"
-        name="fab_title"/>
-    <attr format="boolean"
-        name="fab_stroke_visible"/>
-
-    <attr format="reference"
-        name="ggg_icono"/>
-  </declare-styleable>
-
-  <declare-styleable name="FloatingActionMenuButton">
-    <attr format="color"
-        name="fab_plusIconColor"/>
-  </declare-styleable>
-
   <declare-styleable name="FloatingActionsMenu">
     <attr format="enum"
         name="fab_vertical_alignment">
@@ -49,7 +19,8 @@
       <enum name="right"
           value="2"/>
     </attr>
-
+    <attr format="boolean"
+        name="fab_grouped_submenus"/>
 
     <attr format="color"
         name="fab_addButtonColorPressed"/>
@@ -77,6 +48,11 @@
     </attr>
   </declare-styleable>
 
+  <declare-styleable name="FloatingActionMenuButton">
+    <attr format="color"
+        name="fab_plusIconColor"/>
+  </declare-styleable>
+
   <declare-styleable name="FloatingActionsSubmenu">
     <attr format="enum"
         name="fab_expand_direction">
@@ -88,16 +64,43 @@
           value="2"/>
       <enum name="right"
           value="3"/>
-      <enum name="horizontal"
-          value="4"/>
       <enum name="round"
-          value="5"/>
+          value="4"/>
       <enum name="fan"
-          value="6"/>
+          value="5"/>
     </attr>
     <attr format="integer"
         name="fab_button_spacing"/>
     <attr format="boolean"
         name="fab_enable_overlay"/>
+    <attr format="reference"
+        name="fab_submenu_icon"/>
+    <attr format="string"
+        name="fab_submenu_group"/>
+  </declare-styleable>
+
+  <declare-styleable name="FloatingActionButton">
+    <attr format="color"
+        name="fab_colorPressed"/>
+    <attr format="color"
+        name="fab_colorDisabled"/>
+    <attr format="color"
+        name="fab_colorNormal"/>
+    <attr format="reference"
+        name="fab_icon"/>
+    <attr format="enum"
+        name="fab_size">
+      <enum name="normal"
+          value="0"/>
+      <enum name="mini"
+          value="1"/>
+    </attr>
+    <attr format="string"
+        name="fab_title"/>
+    <attr format="boolean"
+        name="fab_stroke_visible"/>
+
+    <attr format="reference"
+        name="ggg_icono"/>
   </declare-styleable>
 </resources>
