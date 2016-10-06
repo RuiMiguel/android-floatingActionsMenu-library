@@ -40,7 +40,7 @@
       ggg:fab_addButtonPlusIconColor="@android:color/transparent"
       ggg:fab_colorNormal="@android:color/transparent"
       ggg:fab_colorPressed="@android:color/transparent"
-      ggg:fab_horizontal_alignment="left"
+      ggg:fab_horizontal_alignment="center"
       ggg:fab_vertical_alignment="bottom"
       ggg:ggg_icono="@android:drawable/ic_menu_gallery"
       >
@@ -81,7 +81,7 @@
         ggg:fab_enable_overlay="true"
         ggg:fab_expand_direction="fan"
         ggg:fab_submenu_radius="90dp"
-        ggg:fab_submenu_angle_overflow="10"
+        ggg:fab_submenu_angle_overflow="5"
         ggg:fab_submenu_icon="@android:drawable/ic_menu_always_landscape_portrait"
         >
       <com.ruialonso.library.FloatingActionButton
@@ -129,7 +129,7 @@
         android:background="@android:color/holo_orange_dark"
 
         ggg:fab_enable_overlay="false"
-        ggg:fab_expand_direction="right"
+        ggg:fab_expand_direction="left"
         ggg:fab_submenu_group="horizontal"
         >
       <com.ruialonso.library.FloatingActionButton
@@ -154,7 +154,7 @@
           />
     </com.ruialonso.library.FloatingActionsSubmenu>
 
-    <!--<com.ruialonso.library.FloatingActionsSubmenu
+    <com.ruialonso.library.FloatingActionsSubmenu
         android:id="@+id/floating_actions_submenu4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -184,6 +184,6 @@
           ggg:fab_title="photo"
           ggg:fab_size="mini"
           />
-    </com.ruialonso.library.FloatingActionsSubmenu>-->
+    </com.ruialonso.library.FloatingActionsSubmenu>
   </com.ruialonso.library.FloatingActionsMenu>
 </RelativeLayout>

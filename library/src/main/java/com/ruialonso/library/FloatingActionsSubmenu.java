@@ -392,25 +392,23 @@ public class FloatingActionsSubmenu extends ViewGroup {
         double startAngle = Math.toRadians(angleOverflow);
         double endAngle = Math.toRadians(180 - angleOverflow);
         Point center = new Point();
+        center.y = maxHeight - menu.floatingActionMenuButton.getMeasuredHeight()/2;
 
         switch (menu.horizontalAlignment) {
           case FloatingActionsMenu.ALIGNMENT_LEFT:
             startAngle = Math.toRadians(angleOverflow);
             endAngle = Math.toRadians(90 - angleOverflow);
-            center.x = 0;
-            center.y = maxHeight;
+            center.x = menu.floatingActionMenuButton.getMeasuredWidth()/2;
             break;
           case FloatingActionsMenu.ALIGNMENT_RIGHT:
             startAngle = Math.toRadians(90 + angleOverflow);
             endAngle = Math.toRadians(180 - angleOverflow);
             center.x = maxWidth;
-            center.y = maxHeight;
             break;
           case FloatingActionsMenu.ALIGNMENT_CENTER:
             startAngle = Math.toRadians(angleOverflow);
             endAngle = Math.toRadians(180 - angleOverflow);
             center.x = maxWidth / 2;
-            center.y = maxHeight;
             break;
         }
 
