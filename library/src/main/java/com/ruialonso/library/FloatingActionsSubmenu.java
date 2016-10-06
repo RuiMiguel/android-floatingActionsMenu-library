@@ -2,10 +2,12 @@ package com.ruialonso.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
@@ -29,7 +31,8 @@ public class FloatingActionsSubmenu extends ViewGroup {
   private int expandDirection;
   private String submenuGroup;
   private int buttonSpacing;
-  private float radius;
+  private int radius;
+  private int angleOverflow;
   @DrawableRes private int submenuIconRes;
   private Drawable submenuIcon;
 
@@ -80,6 +83,8 @@ public class FloatingActionsSubmenu extends ViewGroup {
     radius =
         attrSubmenu.getDimensionPixelSize(R.styleable.FloatingActionsSubmenu_fab_submenu_radius,
             getResources().getDimensionPixelSize(R.dimen.fab_submenu_default_radius));
+    angleOverflow =
+        attrSubmenu.getInteger(R.styleable.FloatingActionsSubmenu_fab_submenu_angle_overflow, 0);
 
     buttonSpacing = attrSubmenu.getInt(R.styleable.FloatingActionsSubmenu_fab_button_spacing,
         getResources().getDimensionPixelSize(R.dimen.fab_button_default_spacing));
@@ -283,7 +288,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
     int count = getChildCount();
 
-    int childWidth, childHeight, childLeft, childTop;
+    int childLeft, childTop;
     final int maxWidth = menuRight - menuLeft;
     final int maxHeight = menuBottom - menuTop;
 
@@ -300,14 +305,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           childLeft = maxWidth / 2 - child.getMeasuredWidth() / 2;
           childTop = nextY - child.getMeasuredHeight();
 
-          //Get the maximum size of the child
-          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-          childWidth = child.getMeasuredWidth();
-          childHeight = child.getMeasuredHeight();
-
-          //do the layout
-          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+          layoutChild(child, maxHeight, maxWidth, childLeft, childTop);
 
           nextY -= childTop - buttonSpacing;
         }
@@ -321,14 +319,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           childLeft = maxWidth / 2 - child.getMeasuredWidth() / 2;
           childTop = nextY;
 
-          //Get the maximum size of the child
-          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-          childWidth = child.getMeasuredWidth();
-          childHeight = child.getMeasuredHeight();
-
-          //do the layout
-          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+          layoutChild(child, maxHeight, maxWidth, childLeft, childTop);
 
           nextY += childTop + child.getMeasuredHeight() + buttonSpacing;
         }
@@ -342,14 +333,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
           childLeft = nextX - child.getMeasuredWidth();
           childTop = maxHeight / 2 - child.getMeasuredHeight() / 2;
 
-          //Get the maximum size of the child
-          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-          childWidth = child.getMeasuredWidth();
-          childHeight = child.getMeasuredHeight();
-
-          //do the layout
-          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+          layoutChild(child, maxHeight, maxWidth, childLeft, childTop);
 
           nextX -= childLeft - buttonSpacing;
         }
@@ -363,25 +347,111 @@ public class FloatingActionsSubmenu extends ViewGroup {
           childLeft = nextX;
           childTop = maxHeight / 2 - child.getMeasuredHeight() / 2;
 
-          //Get the maximum size of the child
-          child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
-              MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
-          childWidth = child.getMeasuredWidth();
-          childHeight = child.getMeasuredHeight();
-
-          //do the layout
-          child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+          layoutChild(child, maxHeight, maxWidth, childLeft, childTop);
 
           nextX += childLeft + child.getMeasuredWidth() + buttonSpacing;
         }
         break;
       case EXPAND_ROUND:
+        /*
+        double startAngle = Math.toRadians(0);
+        double endAngle = Math.toRadians(360 - angleOverflow);
 
+        // Prevent overlapping when it is a full circle
+        int divisor;
+        if (Math.abs(endAngle - startAngle) >= Math.toRadians(360) || count <= 1) {
+          divisor = count;
+        } else {
+          divisor = count - 1;
+        }
+
+        double sweepAngle = Math.abs(endAngle - startAngle) / divisor;
+        double nextAngle = startAngle;
+
+        Point center = new Point();
+        center.x = maxWidth / 2;
+        center.y = maxHeight / 2;
+
+
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+
+          childLeft = (int)(Math.cos(nextAngle) * radius) + center.x;
+          childTop = (int) -(Math.sin(nextAngle) * radius) + center.y;
+
+          layoutChild(child, maxHeight, maxWidth, childLeft - child.getMeasuredWidth() / 2, childTop
+              - menu.floatingActionMenuButton.getMeasuredHeight()
+              - child.getMeasuredWidth() / 2);
+
+          nextAngle += sweepAngle;
+        }
+        */
         break;
       case EXPAND_FAN:
+        double startAngle = Math.toRadians(angleOverflow);
+        double endAngle = Math.toRadians(180 - angleOverflow);
+        Point center = new Point();
+
+        switch (menu.horizontalAlignment) {
+          case FloatingActionsMenu.ALIGNMENT_LEFT:
+            startAngle = Math.toRadians(angleOverflow);
+            endAngle = Math.toRadians(90 - angleOverflow);
+            center.x = 0;
+            center.y = maxHeight;
+            break;
+          case FloatingActionsMenu.ALIGNMENT_RIGHT:
+            startAngle = Math.toRadians(90 + angleOverflow);
+            endAngle = Math.toRadians(180 - angleOverflow);
+            center.x = maxWidth;
+            center.y = maxHeight;
+            break;
+          case FloatingActionsMenu.ALIGNMENT_CENTER:
+            startAngle = Math.toRadians(angleOverflow);
+            endAngle = Math.toRadians(180 - angleOverflow);
+            center.x = maxWidth / 2;
+            center.y = maxHeight;
+            break;
+        }
+
+        // Prevent overlapping when it is a full circle
+        int divisor;
+        if (Math.abs(endAngle - startAngle) >= Math.toRadians(360) || count <= 1) {
+          divisor = count;
+        } else {
+          divisor = count - 1;
+        }
+
+        double sweepAngle = Math.abs(endAngle - startAngle) / divisor;
+        double nextAngle = startAngle;
+
+        for (int i = 0; i < count; i++) {
+          View child = getChildAt(i);
+          if (child.getVisibility() == GONE) return;
+
+          childLeft = (int)(Math.cos(nextAngle) * radius) + center.x;
+          childTop = (int) -(Math.sin(nextAngle) * radius) + center.y;
+
+          layoutChild(child, maxHeight, maxWidth, childLeft - child.getMeasuredWidth() / 2, childTop
+              - menu.floatingActionMenuButton.getMeasuredHeight()
+              - child.getMeasuredWidth() / 2);
+
+          nextAngle += sweepAngle;
+        }
 
         break;
     }
+  }
+
+  private void layoutChild(View child, int maxHeight, int maxWidth, int childLeft, int childTop) {
+    //Get the maximum size of the child
+    child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+        MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+    int childWidth = child.getMeasuredWidth();
+    int childHeight = child.getMeasuredHeight();
+
+    //do the layout
+    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
   }
   //endregion
 

@@ -352,29 +352,28 @@ public class FloatingActionsMenu extends RelativeLayout {
     childLeft = left;
     childTop = top;
 
+    int expandDirection = ((FloatingActionsSubmenu) child).getExpandDirection();
+
     switch (verticalAlignment) {
       case ALIGNMENT_CENTER:
         childTop = menuButtonCenter.y - (child.getMeasuredHeight() / 2);
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_DOWN) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
           childTop += 3*floatingActionMenuButton.getMeasuredHeight()/2;
         }
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_UP) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_UP) {
           childTop -= 3*floatingActionMenuButton.getMeasuredHeight()/2;
         }
+
         break;
       case ALIGNMENT_TOP:
         childTop = top;
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_DOWN) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
           childTop += floatingActionMenuButton.getMeasuredHeight();
         }
         break;
       case ALIGNMENT_BOTTOM:
         childTop = bottom - child.getMeasuredHeight();
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_UP) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_UP) {
           childTop -= floatingActionMenuButton.getMeasuredHeight();
         }
         break;
@@ -383,26 +382,22 @@ public class FloatingActionsMenu extends RelativeLayout {
     switch (horizontalAlignment) {
       case ALIGNMENT_CENTER:
         childLeft = menuButtonCenter.x - (child.getMeasuredWidth() / 2);
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_RIGHT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
           childLeft += 3*floatingActionMenuButton.getMeasuredWidth()/2;
         }
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_LEFT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT) {
           childLeft -= 3*floatingActionMenuButton.getMeasuredWidth()/2;
         }
         break;
       case ALIGNMENT_LEFT:
         childLeft = left;
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_RIGHT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
           childLeft += floatingActionMenuButton.getMeasuredWidth();
         }
         break;
       case ALIGNMENT_RIGHT:
         childLeft = right - child.getMeasuredWidth();
-        if (((FloatingActionsSubmenu) child).getExpandDirection()
-            == FloatingActionsSubmenu.EXPAND_LEFT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT) {
           childLeft -= floatingActionMenuButton.getMeasuredWidth();
         }
         break;

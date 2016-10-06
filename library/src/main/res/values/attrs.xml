@@ -71,6 +71,8 @@
         name="fab_button_spacing"/>
     <attr format="dimension"
         name="fab_submenu_radius"/>
+    <attr format="integer"
+        name="fab_submenu_angle_overflow"/>
     <attr format="boolean"
         name="fab_enable_overlay"/>
     <attr format="reference"
