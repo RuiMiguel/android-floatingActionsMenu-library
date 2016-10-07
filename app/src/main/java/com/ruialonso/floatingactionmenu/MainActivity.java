@@ -1,12 +1,23 @@
 package com.ruialonso.floatingactionmenu;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+  private RecyclerView recycler;
+  private DummyAdapter adapter;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -18,62 +29,63 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void initViews() {
-    /*
-    com.ruialonso.library.FloatingActionsMenu floatingActionsMenu =
-        (com.ruialonso.library.FloatingActionsMenu) findViewById(R.id.floating_actions_menu);
-    floatingActionsMenu.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
+    recycler = (RecyclerView) findViewById(R.id.recycler);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+    recycler.setLayoutManager(layoutManager);
+    adapter = new DummyAdapter();
+    recycler.setAdapter(adapter);
 
-      }
-    });
+    List<String> dummyList = new ArrayList<>();
+    for (int i = 0; i < 100; i++) {
+      dummyList.add("ELEMENTO " + i);
+    }
+    adapter.setData(dummyList);
+  }
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonSearch =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_search);
-    floatingActionButtonSearch.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_search_text, Snackbar.LENGTH_SHORT).expand();
-      }
-    });
+  private class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> {
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonProfile =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_profile);
-    floatingActionButtonProfile.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_profile_text, Snackbar.LENGTH_SHORT).expand();
-      }
-    });
+    private List<String> data;
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonEmotion1 =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_emotion1);
-    floatingActionButtonEmotion1.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_emotion1_text, Snackbar.LENGTH_SHORT).expand();
-      }
-    });
+    public DummyAdapter() {
+      this.data = new ArrayList<>();
+    }
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonEmotion2 =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_emotion2);
-    floatingActionButtonEmotion2.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_emotion2_text, Snackbar.LENGTH_SHORT).expand();
-      }
-    });
+    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+      Context context = parent.getContext();
+      View view = LayoutInflater.from(context).inflate(R.layout.item_element, parent, false);
+      return new ViewHolder(view);
+    }
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonEmotion3 =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_emotion3);
-    floatingActionButtonEmotion3.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_emotion3_text, Snackbar.LENGTH_SHORT).expand();
+    @Override public void onBindViewHolder(ViewHolder holder, int position) {
+      String message = data.get(position);
+      if (position % 2 == 0) {
+        holder.itemView.setBackgroundColor(Color.GRAY);
+      } else {
+        holder.itemView.setBackgroundColor(Color.LTGRAY);
       }
-    });
+      holder.setTitle(message);
+    }
 
-    com.ruialonso.library.FloatingActionButton floatingActionButtonEmotion4 =
-        (com.ruialonso.library.FloatingActionButton) findViewById(R.id.floating_action_button_emotion4);
-    floatingActionButtonEmotion4.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        Snackbar.make(view, R.string.fab_button_emotion4_text, Snackbar.LENGTH_SHORT).expand();
+    public void setData(List<String> newData) {
+      data.addAll(newData);
+    }
+
+    @Override public int getItemCount() {
+      return data.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+      private TextView textView;
+
+      public ViewHolder(View itemView) {
+        super(itemView);
+        textView = (TextView) itemView.findViewById(R.id.textView);
       }
-    });
-*/
+
+      public void setTitle(String message) {
+        textView.setText(message);
+      }
+    }
   }
 }

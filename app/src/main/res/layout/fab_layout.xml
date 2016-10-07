@@ -33,7 +33,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
 
-      android:background="@android:color/transparent"
+      android:background="@android:color/holo_red_light"
       ggg:fab_addButtonColorNormal="@android:color/transparent"
 
       ggg:fab_addButtonColorPressed="@android:color/transparent"
@@ -78,7 +78,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
 
-        ggg:fab_enable_overlay="true"
+        ggg:fab_enable_overlay="false"
         ggg:fab_expand_direction="fan"
         ggg:fab_submenu_radius="90dp"
         ggg:fab_submenu_angle_overflow="5"
@@ -160,7 +160,7 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
 
-        ggg:fab_enable_overlay="true"
+        ggg:fab_enable_overlay="false"
         ggg:fab_expand_direction="right"
         ggg:fab_submenu_group="horizontal"
         >

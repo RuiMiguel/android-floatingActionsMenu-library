@@ -96,6 +96,8 @@ public class FloatingActionsSubmenu extends ViewGroup {
   }
 
   private void initViews() {
+    requestDisallowInterceptTouchEvent(false);
+
     floatingActionButtonItems = new ArrayList<>();
 
     if (submenuIconRes != 0) {
@@ -176,37 +178,31 @@ public class FloatingActionsSubmenu extends ViewGroup {
       case EXPAND_DOWN:
         for (int i = 0; i < count; i++) {
           final View child = getChildAt(i);
-          if (child.getVisibility() == GONE) return;
+          if (child.getVisibility() == GONE) continue;
           child.measure(widthMeasureSpec, heightMeasureSpec);
 
           maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
-          height += child.getMeasuredHeight();
+          maxHeight += child.getMeasuredHeight();
         }
-        height += buttonSpacing * (getChildCount() - 1);
-        //height = adjustForOvershoot(height);
-        maxWidth = Math.max(maxWidth, width);
-        maxHeight = Math.max(maxHeight, height);
+        maxHeight += buttonSpacing * (getChildCount() - 1);
         break;
       case EXPAND_LEFT:
       case EXPAND_RIGHT:
         for (int i = 0; i < count; i++) {
           final View child = getChildAt(i);
-          if (child.getVisibility() == GONE) return;
+          if (child.getVisibility() == GONE) continue;
           child.measure(widthMeasureSpec, heightMeasureSpec);
 
           maxHeight = Math.max(maxHeight, child.getMeasuredHeight());
-          width += child.getMeasuredWidth();
+          maxWidth += child.getMeasuredWidth();
         }
 
-        width += buttonSpacing * (getChildCount() - 1);
-        //width = adjustForOvershoot(width);
-        maxWidth = Math.max(maxWidth, width);
-        maxHeight = Math.max(maxHeight, height);
+        maxWidth += buttonSpacing * (getChildCount() - 1);
         break;
       case EXPAND_ROUND:
         for (int i = 0; i < count; i++) {
           final View child = getChildAt(i);
-          if (child.getVisibility() == GONE) return;
+          if (child.getVisibility() == GONE) continue;
           child.measure(widthMeasureSpec, heightMeasureSpec);
 
           maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
@@ -217,13 +213,11 @@ public class FloatingActionsSubmenu extends ViewGroup {
         height += 2 * maxHeight;
         height += 2 * buttonSpacing;
         height += 2 * radius;
-        //height = adjustForOvershoot(height);
 
         width += menu.floatingActionMenuButton.getMeasuredWidth();
         width += 2 * maxWidth;
         width += 2 * buttonSpacing;
         width += 2 * radius;
-        //width = adjustForOvershoot(width);
 
         maxWidth = Math.max(maxWidth, width);
         maxHeight = Math.max(maxHeight, height);
@@ -231,7 +225,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
       case EXPAND_FAN:
         for (int i = 0; i < count; i++) {
           final View child = getChildAt(i);
-          if (child.getVisibility() == GONE) return;
+          if (child.getVisibility() == GONE) continue;
           child.measure(widthMeasureSpec, heightMeasureSpec);
 
           maxWidth = Math.max(maxWidth, child.getMeasuredWidth());
@@ -249,7 +243,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
           height += 2 * buttonSpacing;
           height += 2 * radius;
         }
-        //height = adjustForOvershoot(height);
 
         width += menu.floatingActionMenuButton.getMeasuredWidth();
         if (menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_LEFT
@@ -262,7 +255,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
           width += 2 * buttonSpacing;
           width += 2 * radius;
         }
-        //width = adjustForOvershoot(width);
 
         maxWidth = Math.max(maxWidth, width);
         maxHeight = Math.max(maxHeight, height);
@@ -271,10 +263,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
     // Report our final dimensions.
     setMeasuredDimension(maxWidth, maxHeight);
-  }
-
-  private int adjustForOvershoot(int dimension) {
-    return dimension * 12 / 10;
   }
   //endregion
 
@@ -481,6 +469,15 @@ public class FloatingActionsSubmenu extends ViewGroup {
   //endregion
 
   //region Expand/Collapse submenu
+  public void toggle() {
+    if (!isVisible) {
+      expand();
+    }
+    else {
+      collapse();
+    }
+  }
+
   public void expand() {
     if (!isVisible) {
       isVisible = true;
@@ -500,7 +497,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
     if (isVisible) {
       isVisible = false;
 
-      setVisibility(INVISIBLE);
+      setVisibility(GONE);
       //TO-DO: collapse floating action buttons with animation
       for (FloatingActionButton floatingActionButton : floatingActionButtonItems) {
       }

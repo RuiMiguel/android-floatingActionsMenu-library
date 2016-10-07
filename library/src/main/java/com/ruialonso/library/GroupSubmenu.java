@@ -31,13 +31,15 @@ public class GroupSubmenu {
 
   public void collapse() {
     for (FloatingActionsSubmenu floatingActionsSubmenu : this.submenuList) {
-      floatingActionsSubmenu.setVisibility(View.INVISIBLE);
+      floatingActionsSubmenu.setVisibility(View.GONE);
+      //floatingActionsSubmenu.toggle();
     }
   }
 
   public void expand() {
     for (FloatingActionsSubmenu floatingActionsSubmenu : this.submenuList) {
       floatingActionsSubmenu.setVisibility(View.VISIBLE);
+      //floatingActionsSubmenu.toggle();
     }
   }
 

@@ -5,10 +5,12 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+import android.view.TouchDelegate;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.RelativeLayout;
@@ -51,7 +53,6 @@ public class FloatingActionsMenu extends RelativeLayout {
   private int currentGroupSubmenuIndex = -1;
   private List<GroupSubmenu> floatingActionsGroupSubmenuList;
 
-  private TouchDelegateGroup mTouchDelegateGroup;
   private OnToggleListener onToggleListener;
 
   //region constructor
@@ -97,9 +98,6 @@ public class FloatingActionsMenu extends RelativeLayout {
         FloatingActionButton.SIZE_NORMAL);
     mAddButtonStrokeVisible =
         attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
-
-    mTouchDelegateGroup = new TouchDelegateGroup(this);
-    setTouchDelegate(mTouchDelegateGroup);
 
     TypedArray attrButton =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
@@ -163,6 +161,8 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void initViews() {
+    requestDisallowInterceptTouchEvent(false);
+
     flipAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
 
     createFloatingActionMenuButton();
@@ -230,33 +230,56 @@ public class FloatingActionsMenu extends RelativeLayout {
     // Measurement will ultimately be computing these values.
     int maxHeight = 0;
     int maxWidth = 0;
+    boolean needsAdjustMenuHeight = false;
+    boolean needsAdjustMenuWidth = false;
 
     // Iterate through all children, measuring them and computing our dimensions
     // from their size.
     for (int i = 0; i < count; i++) {
       final View child = getChildAt(i);
 
-      if (child.getVisibility() == GONE) return;
+      if (child.getVisibility() == GONE) continue;
 
       child.measure(widthMeasureSpec, heightMeasureSpec);
 
       int childHeight = child.getMeasuredHeight();
       int childWidth = child.getMeasuredWidth();
 
-      if (verticalAlignment == ALIGNMENT_CENTER) {
-        childHeight *= 2;
-      }
+      if(child instanceof FloatingActionsSubmenu) {
+        int expandDirection = ((FloatingActionsSubmenu) child).getExpandDirection();
 
-      if (horizontalAlignment == ALIGNMENT_CENTER) {
-        childWidth *= 2;
+        if(horizontalAlignment == ALIGNMENT_CENTER) {
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT) {
+            childWidth *= 2;
+            needsAdjustMenuWidth = true;
+          }
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
+            childWidth *= 2;
+            needsAdjustMenuWidth = true;
+          }
+        }
+        if(verticalAlignment == ALIGNMENT_CENTER) {
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_UP) {
+            childHeight *= 2;
+            needsAdjustMenuHeight = true;
+          }
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
+            childHeight *= 2;
+            needsAdjustMenuWidth = true;
+          }
+        }
       }
 
       maxHeight = Math.max(maxHeight, childHeight);
       maxWidth = Math.max(maxWidth, childWidth);
     }
 
-    maxWidth += floatingActionMenuButton.getMeasuredWidth();
-    maxHeight += floatingActionMenuButton.getMeasuredHeight();
+    if(needsAdjustMenuWidth) {
+      maxWidth += floatingActionMenuButton.getMeasuredWidth();
+    }
+    if(needsAdjustMenuHeight) {
+      maxHeight += floatingActionMenuButton.getMeasuredHeight();
+    }
 
     // Report our final dimensions.
     setMeasuredDimension(maxWidth, maxHeight);
@@ -383,10 +406,10 @@ public class FloatingActionsMenu extends RelativeLayout {
       case ALIGNMENT_CENTER:
         childLeft = menuButtonCenter.x - (child.getMeasuredWidth() / 2);
         if (expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
-          childLeft += 3*floatingActionMenuButton.getMeasuredWidth()/2;
+          childLeft = menuButtonCenter.x + floatingActionMenuButton.getMeasuredWidth()/2;
         }
         if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT) {
-          childLeft -= 3*floatingActionMenuButton.getMeasuredWidth()/2;
+          childLeft = menuButtonCenter.x - child.getMeasuredWidth() - floatingActionMenuButton.getMeasuredWidth()/2;
         }
         break;
       case ALIGNMENT_LEFT:
