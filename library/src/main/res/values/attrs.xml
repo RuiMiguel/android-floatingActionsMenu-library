@@ -20,7 +20,7 @@
     </attr>
 
     <attr format="enum"
-        name="fab_addButtonSize">
+        name="fab_menu_button_size">
       <enum name="normal"
           value="0"/>
       <enum name="mini"
