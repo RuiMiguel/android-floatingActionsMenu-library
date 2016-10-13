@@ -1,5 +1,6 @@
 package com.ruialonso.floatingactionmenu;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -10,9 +11,8 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.OvershootInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
-import com.ruialonso.floatingactionmenu.animation.RotationDrawable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -26,21 +26,14 @@ public class FloatingActionsMenu extends RelativeLayout {
   public static final int ALIGNMENT_TOP = 1;
   public static final int ALIGNMENT_BOTTOM = 2;
 
-  public static final int ANIMATION_DURATION = 300;
-  public static final float FLIP_PLUS_ROTATION = 180f;
-
+  public static final int ANIMATION_DURATION = 100;
   public Point menuButtonCenter;
   public FloatingActionMenuButton floatingActionMenuButton;
-
   public int verticalAlignment;
   public int horizontalAlignment;
-
-  private RotationDrawable rotationDrawable;
-  private AnimatorSet flipAnimation;
-
-  private int mAddButtonPlusColor;
-  private int mAddButtonColorNormal;
-  private int mAddButtonColorPressed;
+  private AnimatorSet animatorSet;
+  private int menuButtonColorNormal;
+  private int menuButtonColorPressed;
   private boolean mAddButtonStrokeVisible;
 
   private int menuButtonSize;
@@ -86,16 +79,13 @@ public class FloatingActionsMenu extends RelativeLayout {
     menuButtonSize = attrMenu.getInt(R.styleable.FloatingActionsMenu_fab_menu_button_size,
         FloatingActionButton.SIZE_NORMAL);
 
-
-    mAddButtonPlusColor =
-        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonPlusIconColor,
-            getResources().getColor(android.R.color.white));
-    mAddButtonColorNormal =
-        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorNormal,
+    menuButtonColorNormal =
+        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_bg_menu_button_color_normal,
             getResources().getColor(android.R.color.holo_blue_dark));
-    mAddButtonColorPressed =
-        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_addButtonColorPressed,
+    menuButtonColorPressed =
+        attrMenu.getColor(R.styleable.FloatingActionsMenu_fab_bg_menu_button_color_pressed,
             getResources().getColor(android.R.color.holo_blue_light));
+
     mAddButtonStrokeVisible =
         attrMenu.getBoolean(R.styleable.FloatingActionsMenu_fab_addButtonStrokeVisible, true);
 
@@ -161,8 +151,6 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void initViews() {
-    flipAnimation = new AnimatorSet().setDuration(ANIMATION_DURATION);
-
     createFloatingActionMenuButton();
     bringChildToFront(floatingActionMenuButton);
 
@@ -172,34 +160,18 @@ public class FloatingActionsMenu extends RelativeLayout {
   private void createFloatingActionMenuButton() {
     floatingActionMenuButton = new FloatingActionMenuButton(getContext()) {
       @Override void updateBackground() {
-        mPlusColor = mAddButtonPlusColor;
-        mColorNormal = mAddButtonColorNormal;
-        mColorPressed = mAddButtonColorPressed;
+        bgColorNormal = menuButtonColorNormal;
+        bgColorNormal = menuButtonColorPressed;
         mStrokeVisible = mAddButtonStrokeVisible;
 
         super.updateBackground();
-      }
-
-      @Override Drawable getIconDrawable() {
-
-        // final RotatingDrawable rotatingDrawable = new RotatingDrawable(super.getIconDrawable());
-        final RotationDrawable rotatingDrawable = new RotationDrawable(menuIcon);
-        rotationDrawable = rotatingDrawable;
-
-        final OvershootInterpolator interpolator = new OvershootInterpolator();
-
-        final ObjectAnimator objectAnimator =
-            ObjectAnimator.ofFloat(rotatingDrawable, "rotation", 0, FLIP_PLUS_ROTATION);
-
-        objectAnimator.setInterpolator(interpolator);
-
-        flipAnimation.play(objectAnimator);
-        return rotatingDrawable;
       }
     };
 
     floatingActionMenuButton.setId(R.id.fab_menu_button);
     floatingActionMenuButton.setSize(menuButtonSize);
+
+    setMenuButtonAnimator(menuIcon);
     floatingActionMenuButton.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
         toggle();
@@ -208,6 +180,47 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     addView(floatingActionMenuButton, super.generateDefaultLayoutParams());
   }
+
+  //region animator
+  private void setMenuButtonAnimator(final Drawable icon) {
+    ObjectAnimator flipAnim =
+        ObjectAnimator.ofFloat(floatingActionMenuButton, View.ROTATION_Y, -90);
+    flipAnim.setDuration(ANIMATION_DURATION);
+    flipAnim.setInterpolator(new LinearInterpolator());
+
+    flipAnim.addListener(new Animator.AnimatorListener() {
+      @Override public void onAnimationStart(Animator animator) {
+
+      }
+
+      @Override public void onAnimationEnd(Animator animator) {
+        floatingActionMenuButton.setIconDrawable(icon);
+      }
+
+      @Override public void onAnimationCancel(Animator animator) {
+
+      }
+
+      @Override public void onAnimationRepeat(Animator animator) {
+
+      }
+    });
+
+    ObjectAnimator flipAnimReturn =
+        ObjectAnimator.ofFloat(floatingActionMenuButton, View.ROTATION_Y, 0);
+    flipAnimReturn.setDuration(ANIMATION_DURATION);
+    flipAnimReturn.setInterpolator(new LinearInterpolator());
+
+    AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet.play(flipAnim).before(flipAnimReturn);
+    setMenuButtonAnimator(animatorSet);
+  }
+
+  public void setMenuButtonAnimator(AnimatorSet animatorSet) {
+    this.animatorSet = animatorSet;
+    floatingActionMenuButton.setAnimatorSet(this.animatorSet);
+  }
+  //endregion
 
   private void initSubmenus() {
     resetGroupSubmenuList(floatingActionsGroupSubmenuMap.values());
@@ -243,24 +256,30 @@ public class FloatingActionsMenu extends RelativeLayout {
       int childHeight = child.getMeasuredHeight();
       int childWidth = child.getMeasuredWidth();
 
-      if(child instanceof FloatingActionsSubmenu) {
+      if (child instanceof FloatingActionsSubmenu) {
         int expandDirection = ((FloatingActionsSubmenu) child).getExpandDirection();
 
-        if(horizontalAlignment == ALIGNMENT_CENTER) {
-          if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
-            childWidth *= 2;
+        if (verticalAlignment == ALIGNMENT_CENTER) {
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_UP
+              || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
+            childHeight *= 2;
+            //TODO: not to duplicate height, just align menuButton to correct position, not only center in onRootLayout and onMenuButtonLayout
           }
         }
-        if(verticalAlignment == ALIGNMENT_CENTER) {
-          if (expandDirection == FloatingActionsSubmenu.EXPAND_UP || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
-            childHeight *= 2;
+        if (horizontalAlignment == ALIGNMENT_CENTER) {
+          if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT
+              || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
+            childWidth *= 2;
+            //TODO: not to duplicate width, just align menuButton to correct position, not only center in onRootLayout and onMenuButtonLayout
           }
         }
 
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_UP || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_UP
+            || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
           needsAdjustMenuHeight = true;
         }
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_LEFT || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT
+            || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
           needsAdjustMenuWidth = true;
         }
       }
@@ -269,10 +288,10 @@ public class FloatingActionsMenu extends RelativeLayout {
       maxWidth = Math.max(maxWidth, childWidth);
     }
 
-    if(needsAdjustMenuWidth) {
+    if (needsAdjustMenuWidth) {
       maxWidth += floatingActionMenuButton.getMeasuredWidth();
     }
-    if(needsAdjustMenuHeight) {
+    if (needsAdjustMenuHeight) {
       maxHeight += floatingActionMenuButton.getMeasuredHeight();
     }
 
@@ -317,6 +336,7 @@ public class FloatingActionsMenu extends RelativeLayout {
       case ALIGNMENT_CENTER:
         layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
         menuButtonCenter.y = maxHeight / 2;
+        //TODO: align menuButton to correct position
         break;
       case ALIGNMENT_TOP:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -331,6 +351,7 @@ public class FloatingActionsMenu extends RelativeLayout {
       case ALIGNMENT_CENTER:
         layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
         menuButtonCenter.x = maxWidth / 2;
+        //TODO: align menuButton to correct position
         break;
       case ALIGNMENT_LEFT:
         layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
@@ -380,18 +401,18 @@ public class FloatingActionsMenu extends RelativeLayout {
       case ALIGNMENT_CENTER:
         childTop = menuButtonCenter.y - (childMeasuredHeight / 2);
         if (expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
-          childTop = menuButtonCenter.y + (menuButtonMeasuredHeight/2);
+          childTop = menuButtonCenter.y + (menuButtonMeasuredHeight / 2);
         }
         if (expandDirection == FloatingActionsSubmenu.EXPAND_UP) {
-          childTop = menuButtonCenter.y - (menuButtonMeasuredHeight/2) - childMeasuredHeight;
+          childTop = menuButtonCenter.y - (menuButtonMeasuredHeight / 2) - childMeasuredHeight;
         }
 
         break;
       case ALIGNMENT_TOP:
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_LEFT || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT
+            || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
           childTop = menuButtonCenter.y - (childMeasuredHeight / 2);
-        }
-        else {
+        } else {
           childTop = top;
         }
 
@@ -400,10 +421,10 @@ public class FloatingActionsMenu extends RelativeLayout {
         }
         break;
       case ALIGNMENT_BOTTOM:
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_LEFT || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT
+            || expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
           childTop = menuButtonCenter.y - (childMeasuredHeight / 2);
-        }
-        else {
+        } else {
           childTop = bottom - childMeasuredHeight;
         }
 
@@ -417,17 +438,17 @@ public class FloatingActionsMenu extends RelativeLayout {
       case ALIGNMENT_CENTER:
         childLeft = menuButtonCenter.x - (childMeasuredWidth / 2);
         if (expandDirection == FloatingActionsSubmenu.EXPAND_RIGHT) {
-          childLeft = menuButtonCenter.x + (menuButtonMeasuredWidth/2);
+          childLeft = menuButtonCenter.x + (menuButtonMeasuredWidth / 2);
         }
         if (expandDirection == FloatingActionsSubmenu.EXPAND_LEFT) {
-          childLeft = menuButtonCenter.x - (menuButtonMeasuredWidth/2) - childMeasuredWidth;
+          childLeft = menuButtonCenter.x - (menuButtonMeasuredWidth / 2) - childMeasuredWidth;
         }
         break;
       case ALIGNMENT_LEFT:
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_UP || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_UP
+            || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
           childLeft = menuButtonCenter.x - (childMeasuredWidth / 2);
-        }
-        else {
+        } else {
           childLeft = left;
         }
 
@@ -436,10 +457,10 @@ public class FloatingActionsMenu extends RelativeLayout {
         }
         break;
       case ALIGNMENT_RIGHT:
-        if(expandDirection == FloatingActionsSubmenu.EXPAND_UP || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
+        if (expandDirection == FloatingActionsSubmenu.EXPAND_UP
+            || expandDirection == FloatingActionsSubmenu.EXPAND_DOWN) {
           childLeft = menuButtonCenter.x - (childMeasuredWidth / 2);
-        }
-        else {
+        } else {
           childLeft = right - childMeasuredWidth;
         }
 
@@ -516,6 +537,8 @@ public class FloatingActionsMenu extends RelativeLayout {
     } else {
       toggleMultipleSubmenu();
     }
+
+    runMenuToogleAnimator();
   }
 
   private boolean isAloneSubmenu() {
@@ -548,13 +571,19 @@ public class FloatingActionsMenu extends RelativeLayout {
     } else {
       currentGroupSubmenuIndex = 0;
     }
-    notifyMenuOverlayVisibility(
-        floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).isOverlayEnabled());
+    GroupSubmenu activeSubmenu = floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex);
 
+    notifyMenuOverlayVisibility(activeSubmenu.isOverlayEnabled());
+
+    activeSubmenu.expand();
+  }
+
+  private void runMenuToogleAnimator() {
     GroupSubmenu activeSubmenu = floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex);
     activeSubmenu.expand();
 
-    floatingActionMenuButton.setIconDrawable(activeSubmenu.getSubmenuIcon());
+    setMenuButtonAnimator(activeSubmenu.getSubmenuIcon());
+    floatingActionMenuButton.runAnimation();
   }
 
   private void notifyMenuOverlayVisibility(boolean menuOverlayVisibility) {

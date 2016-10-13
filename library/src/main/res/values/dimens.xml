@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="fab_button_default_spacing">5dp</dimen>
+  <dimen name="fab_button_default_spacing">2dp</dimen>
   <dimen name="fab_submenu_default_radius">10dp</dimen>
 
 
-  <dimen name="fab_size_normal">54dp</dimen>
+  <dimen name="fab_size_menu_normal">65dp</dimen>
+  <dimen name="fab_size_normal">63dp</dimen>
   <dimen name="fab_size_mini">40dp</dimen>
 
   <!--<dimen name="fab_icon_size">24dp</dimen> -->

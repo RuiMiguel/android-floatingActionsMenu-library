@@ -1,5 +1,8 @@
 package com.ruialonso.floatingactionmenu;
 
+import android.animation.Animator;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -8,11 +11,13 @@ import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.Shape;
+import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+import android.view.View;
+import android.view.animation.LinearInterpolator;
 
 public class FloatingActionMenuButton extends FloatingActionButton {
-  private Drawable defaultIcon;
-  int mPlusColor;
+  @DrawableRes private int buttonDefaultIcon;
 
   public FloatingActionMenuButton(Context context) {
     super(context);
@@ -39,45 +44,35 @@ public class FloatingActionMenuButton extends FloatingActionButton {
     TypedArray attr =
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionMenuButton, 0,
             0);
-    mPlusColor = attr.getColor(R.styleable.FloatingActionMenuButton_fab_plusIconColor,
-        getColor(android.R.color.white));
 
     attr.recycle();
+
+    initView();
   }
 
-  @Override Drawable getIconDrawable() {
-    final float iconSize = getDimension(R.dimen.fab_icon_size);
-    final float iconHalfSize = iconSize / 2f;
-
-    final float plusSize = getDimension(R.dimen.fab_plus_icon_size);
-    final float plusHalfStroke = getDimension(R.dimen.fab_plus_icon_stroke) / 2f;
-    final float plusOffset = (iconSize - plusSize) / 2f;
-
-    final Shape shape = new Shape() {
-      @Override public void draw(Canvas canvas, Paint paint) {
-        canvas.drawRect(plusOffset, iconHalfSize - plusHalfStroke, iconSize - plusOffset,
-            iconHalfSize + plusHalfStroke, paint);
-        canvas.drawRect(iconHalfSize - plusHalfStroke, plusOffset, iconHalfSize + plusHalfStroke,
-            iconSize - plusOffset, paint);
-      }
-    };
-
-    ShapeDrawable drawable = new ShapeDrawable(shape);
-
-    final Paint paint = drawable.getPaint();
-    paint.setColor(mPlusColor);
-    paint.setStyle(Style.FILL);
-    paint.setAntiAlias(true);
-
-    return drawable;
+  private void initView() {
+    buttonDefaultIcon = getIcon();
   }
 
-  /*
-  <objectAnimator
-        android:valueFrom="-180"
-        android:valueTo="0"
-        android:propertyName="rotationY"
-        android:interpolator="@android:interpolator/accelerate_decelerate"
-        android:duration="@integer/card_flip_time_full" />
-   */
+  public void setIconDrawableToDefault() {
+    setIcon(buttonDefaultIcon);
+  }
+
+  //region animator
+  @Override
+  protected void initDefaultAnimation() {
+    /*
+    ObjectAnimator flipAnim = ObjectAnimator.ofFloat(this, View.ROTATION_Y, -90);
+    flipAnim.setDuration(500);
+    flipAnim.setInterpolator(new LinearInterpolator());
+
+    ObjectAnimator flipAnim2 = ObjectAnimator.ofFloat(this, View.ROTATION_Y, 0);
+    flipAnim2.setDuration(500);
+    flipAnim2.setInterpolator(new LinearInterpolator());
+
+    animatorSet = new AnimatorSet();
+    animatorSet.play(flipAnim).before(flipAnim2);
+    */
+  }
+  //endregion
 }

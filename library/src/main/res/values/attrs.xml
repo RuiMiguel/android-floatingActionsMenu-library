@@ -26,24 +26,13 @@
       <enum name="mini"
           value="1"/>
     </attr>
+    <attr format="color"
+        name="fab_bg_menu_button_color_normal"/>
+    <attr format="color"
+        name="fab_bg_menu_button_color_pressed"/>
 
-    <attr format="color"
-        name="fab_addButtonColorPressed"/>
-    <attr format="color"
-        name="fab_addButtonColorNormal"/>
-    <attr format="color"
-        name="fab_addButtonPlusIconColor"/>
     <attr format="boolean"
         name="fab_addButtonStrokeVisible"/>
-    <attr format="reference"
-        name="fab_labelStyle"/>
-    <attr format="enum"
-        name="fab_labelsPosition">
-      <enum name="left"
-          value="0"/>
-      <enum name="right"
-          value="1"/>
-    </attr>
   </declare-styleable>
 
   <declare-styleable name="FloatingActionMenuButton">
@@ -83,11 +72,12 @@
 
   <declare-styleable name="FloatingActionButton">
     <attr format="color"
-        name="fab_colorPressed"/>
+        name="fab_bg_color_normal"/>
     <attr format="color"
-        name="fab_colorDisabled"/>
+        name="fab_bg_color_pressed"/>
     <attr format="color"
-        name="fab_colorNormal"/>
+        name="fab_bg_color_disabled"/>
+
     <attr format="reference"
         name="fab_icon"/>
     <attr format="enum"
@@ -97,8 +87,7 @@
       <enum name="mini"
           value="1"/>
     </attr>
-    <attr format="string"
-        name="fab_title"/>
+
     <attr format="boolean"
         name="fab_stroke_visible"/>
 

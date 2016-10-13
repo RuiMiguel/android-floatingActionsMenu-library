@@ -1,6 +1,7 @@
 package com.ruialonso.floatingactionmenu;
 
 import android.animation.Animator;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -11,10 +12,7 @@ import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.view.animation.TranslateAnimation;
+import android.view.animation.BounceInterpolator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,7 +236,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
         }
 
         height += menu.floatingActionMenuButton.getMeasuredHeight();
-        //TO-DO: adjust height adding sin(overflowAngle) instead of floatingMenuButton.height
+        //TODO: adjust height adding sin(overflowAngle) instead of floatingMenuButton.height
         if (menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_TOP
             || menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_BOTTOM) {
           height += maxHeight;
@@ -251,7 +249,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
         }
 
         width += menu.floatingActionMenuButton.getMeasuredWidth();
-        //TO-DO: adjust width adding cos(overflowAngle) instead of floatingMenuButton.width
+        //TODO: adjust width adding cos(overflowAngle) instead of floatingMenuButton.width
         if (menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_LEFT
             || menu.verticalAlignment == FloatingActionsMenu.ALIGNMENT_RIGHT) {
           width += maxWidth;
@@ -437,37 +435,42 @@ public class FloatingActionsSubmenu extends ViewGroup {
     }
   }
 
-  private void layoutChild(
-      final View child, int maxHeight, int maxWidth, final int childLeft, final int childTop) {
+  private void layoutChild(final View child, int maxHeight, int maxWidth, final int childLeft,
+      final int childTop) {
     //Get the maximum size of the child
     child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
         MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
     final int childWidth = child.getMeasuredWidth();
     final int childHeight = child.getMeasuredHeight();
 
+    setButtonAnimator(child, childLeft, childTop, childWidth, childHeight);
+  }
+  //endregion
+
+  private void setButtonAnimator(
+      final View child, final int childLeft, final int childTop, final int childWidth, final int childHeight) {
     final int fromXDelta = menu.menuButtonCenter.x;
     final int fromYDelta = menu.menuButtonCenter.y;
-    final int toXDelta = childLeft+childWidth/2;
-    final int toYDelta = childTop+childHeight/2;
+    final int toXDelta = childLeft + childWidth / 2;
+    final int toYDelta = childTop + childHeight / 2;
 
-    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-/*
-    ObjectAnimator animatorX = ObjectAnimator.ofInt(child,"x", fromXDelta, toXDelta);
-    ObjectAnimator animatorY = ObjectAnimator.ofInt(child,"y", fromYDelta, toYDelta);
-    animatorX.setInterpolator(new AccelerateDecelerateInterpolator());
-    animatorY.setInterpolator(new AccelerateDecelerateInterpolator());
-    animatorX.setDuration(2000);
-    animatorY.setDuration(2000);
-    animatorX.start();
-    animatorY.start();
+    ObjectAnimator translateXAnim = ObjectAnimator.ofFloat(this, "x", fromXDelta, toXDelta);
+    translateXAnim.setDuration(500);
+    translateXAnim.setInterpolator(new BounceInterpolator());
 
-    animatorX.addListener(new Animator.AnimatorListener() {
+    ObjectAnimator translateYAnim = ObjectAnimator.ofFloat(this, "y", fromYDelta, toYDelta);
+    translateYAnim.setDuration(500);
+    translateYAnim.setInterpolator(new BounceInterpolator());
+
+    AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet.play(translateXAnim).with(translateYAnim);
+    animatorSet.addListener(new Animator.AnimatorListener() {
       @Override public void onAnimationStart(Animator animation) {
 
       }
 
       @Override public void onAnimationEnd(Animator animation) {
-
+        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
       }
 
       @Override public void onAnimationCancel(Animator animation) {
@@ -478,9 +481,12 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
       }
     });
-*/
+
+    ((FloatingActionButton)child).setAnimatorSet(animatorSet);
+    //((FloatingActionButton)child).runAnimation();
+
+    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
   }
-  //endregion
 
   //region Add/Remove buttons
   public boolean addButton(FloatingActionButton floatingActionButton) {
@@ -523,9 +529,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
       isVisible = true;
 
       setVisibility(VISIBLE);
-      //TO-DO: expand floating action buttons with animation
-      for (FloatingActionButton floatingActionButton : floatingActionButtonItems) {
-      }
 
       if (submenuUpdateListener != null) {
         submenuUpdateListener.onMenuExpanded();
@@ -538,10 +541,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
       isVisible = false;
 
       setVisibility(GONE);
-      //TO-DO: collapse floating action buttons with animation
-      for (FloatingActionButton floatingActionButton : floatingActionButtonItems) {
-menu.floatingActionMenuButton.startAnimation(new RotateAnimation(0,180));
-      }
 
       if (submenuUpdateListener != null) {
         submenuUpdateListener.onMenuCollapsed();
