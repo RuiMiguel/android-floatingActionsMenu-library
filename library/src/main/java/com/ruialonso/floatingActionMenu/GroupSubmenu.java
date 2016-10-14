@@ -33,18 +33,19 @@ public class GroupSubmenu {
 
   public void collapse() {
     for (FloatingActionsSubmenu floatingActionsSubmenu : this.submenuList) {
-      floatingActionsSubmenu.setVisibility(View.GONE);
-      //floatingActionsSubmenu.toggle();
+      floatingActionsSubmenu.hide();
     }
   }
 
   public void expand() {
     for (FloatingActionsSubmenu floatingActionsSubmenu : this.submenuList) {
-      floatingActionsSubmenu.setVisibility(View.VISIBLE);
-      //floatingActionsSubmenu.toggle();
+      floatingActionsSubmenu.show();
 
       floatingActionsSubmenu.animate();
-      submenuIcon = floatingActionsSubmenu.getSubmenuIcon();
+      Drawable icon = floatingActionsSubmenu.getSubmenuIcon();
+      if(icon != null) {
+        submenuIcon = icon;
+      }
     }
   }
 

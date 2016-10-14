@@ -127,7 +127,6 @@ public class FloatingActionsSubmenu extends ViewGroup {
   @Override protected void onAttachedToWindow() {
     super.onAttachedToWindow();
     menu = (FloatingActionsMenu) getParent();
-    menu.floatingActionMenuButton.setIconDrawable(submenuIcon);
 
     validateAttributes();
   }
@@ -548,13 +547,14 @@ public class FloatingActionsSubmenu extends ViewGroup {
     }
   }
 
-  @Override public void setVisibility(int visibility) {
-    if (visibility == VISIBLE) {
-      isVisible = true;
-    } else {
-      isVisible = false;
-    }
-    super.setVisibility(visibility);
+  public void show() {
+    isVisible = false;
+    expand();
+  }
+
+  public void hide() {
+    isVisible = true;
+    collapse();
   }
   //endregion
 

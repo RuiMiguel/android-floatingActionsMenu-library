@@ -80,9 +80,9 @@ public class FloatingActionButton extends ImageButton {
         getContext().obtainStyledAttributes(attributeSet, R.styleable.FloatingActionButton, 0, 0);
 
     bgColorNormal = attr.getColor(R.styleable.FloatingActionButton_fab_bg_color_normal,
-        getResources().getColor(android.R.color.holo_blue_dark));
+        getResources().getColor(android.R.color.transparent));
     bgColorPressed = attr.getColor(R.styleable.FloatingActionButton_fab_bg_color_pressed,
-        getResources().getColor(android.R.color.holo_blue_light));
+        getResources().getColor(android.R.color.transparent));
     bgColorDisabled = attr.getColor(R.styleable.FloatingActionButton_fab_bg_color_disabled,
         getResources().getColor(android.R.color.darker_gray));
 
@@ -125,6 +125,7 @@ public class FloatingActionButton extends ImageButton {
     final float strokeWidth = getResources().getDimension(R.dimen.fab_stroke_width);
     final float halfStrokeWidth = strokeWidth / 2f;
 
+    /*
     Drawable drawAux;
 
     if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
@@ -137,9 +138,14 @@ public class FloatingActionButton extends ImageButton {
           .getDrawable(
               buttonSize == SIZE_NORMAL ? R.drawable.fab_bg_normal : R.drawable.fab_bg_mini);
     }
-
     LayerDrawable layerDrawable = new LayerDrawable(new Drawable[] {
         drawAux, createFillDrawable(strokeWidth), createOuterStrokeDrawable(strokeWidth),
+        getIconDrawable()
+    });
+    */
+
+    LayerDrawable layerDrawable = new LayerDrawable(new Drawable[] {
+        createFillDrawable(strokeWidth), createOuterStrokeDrawable(strokeWidth),
         getIconDrawable()
     });
 
@@ -150,14 +156,14 @@ public class FloatingActionButton extends ImageButton {
     int circleInsetTop = (int) (shadowRadius - shadowOffset);
     int circleInsetBottom = (int) (shadowRadius + shadowOffset);
 
-    layerDrawable.setLayerInset(1, circleInsetHorizontal, circleInsetTop, circleInsetHorizontal,
+    layerDrawable.setLayerInset(0, circleInsetHorizontal, circleInsetTop, circleInsetHorizontal,
         circleInsetBottom);
 
-    layerDrawable.setLayerInset(2, (int) (circleInsetHorizontal - halfStrokeWidth),
+    layerDrawable.setLayerInset(1, (int) (circleInsetHorizontal - halfStrokeWidth),
         (int) (circleInsetTop - halfStrokeWidth), (int) (circleInsetHorizontal - halfStrokeWidth),
         (int) (circleInsetBottom - halfStrokeWidth));
 
-    layerDrawable.setLayerInset(3, circleInsetHorizontal + iconOffset, circleInsetTop + iconOffset,
+    layerDrawable.setLayerInset(2, circleInsetHorizontal + iconOffset, circleInsetTop + iconOffset,
         circleInsetHorizontal + iconOffset, circleInsetBottom + iconOffset);
 
     setBackgroundCompat(layerDrawable);
