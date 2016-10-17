@@ -101,15 +101,6 @@
           android:src="@drawable/ic_fab_heart"
           />
       <ImageView
-          android:id="@+id/floating_action_button_thunder"
-          android:layout_width="@dimen/fab_width"
-          android:layout_height="@dimen/fab_height"
-          android:layout_above="@id/floating_action_button_smile"
-          android:layout_marginBottom="13dp"
-          android:layout_toRightOf="@id/fake_menu_button_submenu_fan"
-          android:src="@drawable/ic_fab_thunder"
-          />
-      <ImageView
           android:id="@+id/floating_action_button_smile"
           android:layout_width="@dimen/fab_width"
           android:layout_height="@dimen/fab_height"
@@ -118,6 +109,15 @@
           android:layout_marginLeft="50dp"
           android:layout_toRightOf="@+id/fake_menu_button_submenu_fan"
           android:src="@drawable/ic_fab_smile"
+          />
+      <ImageView
+          android:id="@+id/floating_action_button_thunder"
+          android:layout_width="@dimen/fab_width"
+          android:layout_height="@dimen/fab_height"
+          android:layout_above="@id/floating_action_button_smile"
+          android:layout_marginBottom="13dp"
+          android:layout_toRightOf="@id/fake_menu_button_submenu_fan"
+          android:src="@drawable/ic_fab_thunder"
           />
     </RelativeLayout>
 
