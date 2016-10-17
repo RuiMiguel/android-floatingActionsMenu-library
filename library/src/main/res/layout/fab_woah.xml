@@ -52,7 +52,7 @@
           android:layout_width="@dimen/fab_width_mini"
           android:layout_height="@dimen/fab_height_mini"
           android:layout_centerVertical="true"
-          android:layout_marginRight="@dimen/fab_mini_horizontal_margin"
+          android:layout_marginRight="29dp"
           android:layout_toLeftOf="@id/fake_menu_button_submenu_horizontal"
           android:src="@drawable/ic_fab_search"
           />
@@ -61,7 +61,7 @@
           android:layout_width="@dimen/fab_width_mini"
           android:layout_height="@dimen/fab_height_mini"
           android:layout_centerVertical="true"
-          android:layout_marginLeft="@dimen/fab_mini_horizontal_margin"
+          android:layout_marginLeft="29dp"
           android:layout_toRightOf="@id/fake_menu_button_submenu_horizontal"
           android:src="@drawable/ic_fab_notifications"
           />
