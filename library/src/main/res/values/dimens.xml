@@ -1,28 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <dimen name="fab_button_default_spacing">2dp</dimen>
-  <dimen name="fab_submenu_default_radius">10dp</dimen>
+  <dimen name="fab_height">65dp</dimen>
+  <dimen name="fab_width">65dp</dimen>
 
+  <dimen name="fab_height_mini">40dp</dimen>
+  <dimen name="fab_width_mini">40dp</dimen>
 
-  <dimen name="fab_size_menu_normal">65dp</dimen>
-  <dimen name="fab_size_normal">63dp</dimen>
-  <dimen name="fab_size_mini">40dp</dimen>
+  <dimen name="fab_margin_bottom">17dp</dimen>
 
-  <dimen name="fab_plus_icon_size">14dp</dimen>
-  <!--This value change the size of '+' of the floating menu -->
-  <dimen name="fab_plus_icon_stroke">2dp</dimen>
+  <dimen name="fab_mini_horizontal_margin">29dp</dimen>
 
-  <dimen name="fab_shadow_offset">3dp</dimen>
-  <dimen name="fab_shadow_radius">9dp</dimen>
-
-  <dimen name="fab_stroke_width">1dp</dimen>
-
-  <dimen name="fab_actions_spacing">16dp</dimen>
-  <dimen name="fab_labels_margin">8dp</dimen>
-
-  <dimen name="activity_horizontal_margin">16dp</dimen>
-  <dimen name="activity_vertical_margin">16dp</dimen>
-
-  <dimen name="label_fab_font_size">20dp</dimen>
-  <dimen name="item_beacon_tvName">16sp</dimen>
+  <dimen name="fab_fan_horizontal_margin">50dp</dimen>
+  <dimen name="fab_fan_vertical_margin">61dp</dimen>
 </resources>
