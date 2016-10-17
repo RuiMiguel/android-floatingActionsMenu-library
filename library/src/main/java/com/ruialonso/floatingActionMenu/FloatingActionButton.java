@@ -108,8 +108,6 @@ public class FloatingActionButton extends ImageButton {
     updateButtonCircleSize();
     updateButtonDrawableSize();
     updateBackground();
-
-    initDefaultAnimation();
   }
 
   private void updateButtonCircleSize() {
@@ -125,32 +123,13 @@ public class FloatingActionButton extends ImageButton {
     final float strokeWidth = getResources().getDimension(R.dimen.fab_stroke_width);
     final float halfStrokeWidth = strokeWidth / 2f;
 
-    /*
-    Drawable drawAux;
-
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
-      drawAux = this.getContext()
-          .getDrawable(
-              buttonSize == SIZE_NORMAL ? R.drawable.fab_bg_normal : R.drawable.fab_bg_mini);
-    } else {
-      drawAux = this.getContext()
-          .getResources()
-          .getDrawable(
-              buttonSize == SIZE_NORMAL ? R.drawable.fab_bg_normal : R.drawable.fab_bg_mini);
-    }
-    LayerDrawable layerDrawable = new LayerDrawable(new Drawable[] {
-        drawAux, createFillDrawable(strokeWidth), createOuterStrokeDrawable(strokeWidth),
-        getIconDrawable()
-    });
-    */
-
     LayerDrawable layerDrawable = new LayerDrawable(new Drawable[] {
         createFillDrawable(strokeWidth), createOuterStrokeDrawable(strokeWidth),
         getIconDrawable()
     });
 
     int iconOffset =
-        (int) (buttonCircleSize - getResources().getDimension(R.dimen.fab_icon_size)) / 2;
+        (int) (buttonCircleSize - getResources().getDimension(buttonSize == SIZE_NORMAL ? R.dimen.fab_size_normal : R.dimen.fab_size_mini)) / 2;
 
     int circleInsetHorizontal = (int) (shadowRadius);
     int circleInsetTop = (int) (shadowRadius - shadowOffset);
@@ -250,7 +229,7 @@ public class FloatingActionButton extends ImageButton {
     setIcon(buttonDefaultIcon);
   }
 
-  @TargetApi(VERSION_CODES.LOLLIPOP) Drawable getIconDrawable() {
+  @TargetApi(VERSION_CODES.LOLLIPOP) public Drawable getIconDrawable() {
     if (buttonIconDrawable != null) {
       return buttonIconDrawable;
     } else if (buttonIcon != 0) {
@@ -354,19 +333,6 @@ public class FloatingActionButton extends ImageButton {
   }
 
   //region animator
-  protected void initDefaultAnimation() {
-    ObjectAnimator translateXAnim = ObjectAnimator.ofFloat(this, "x", this.getX(), this.getX()+300);
-    translateXAnim.setDuration(1000);
-    translateXAnim.setInterpolator(new BounceInterpolator());
-
-    ObjectAnimator translateYAnim = ObjectAnimator.ofFloat(this, "y", this.getY(), this.getY()+300);
-    translateYAnim.setDuration(1000);
-    translateYAnim.setInterpolator(new BounceInterpolator());
-
-    animatorSet = new AnimatorSet();
-    animatorSet.play(translateXAnim).with(translateYAnim);
-  }
-
   public void setAnimatorSet(AnimatorSet animatorSet) {
     this.animatorSet = animatorSet;
   }

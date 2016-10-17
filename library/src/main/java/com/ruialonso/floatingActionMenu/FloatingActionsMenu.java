@@ -11,6 +11,7 @@ import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.RelativeLayout;
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ public class FloatingActionsMenu extends RelativeLayout {
   public FloatingActionMenuButton floatingActionMenuButton;
   public int verticalAlignment;
   public int horizontalAlignment;
-  private AnimatorSet animatorSet;
   private int menuButtonColorNormal;
   private int menuButtonColorPressed;
   private boolean mAddButtonStrokeVisible;
@@ -170,8 +170,6 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     floatingActionMenuButton.setId(R.id.fab_menu_button);
     floatingActionMenuButton.setSize(menuButtonSize);
-
-    setMenuButtonFlipIconAnimator(menuIcon);
     floatingActionMenuButton.setOnClickListener(new OnClickListener() {
       @Override public void onClick(View v) {
         toggle();
@@ -213,12 +211,45 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     AnimatorSet animatorSet = new AnimatorSet();
     animatorSet.play(flipAnim).before(flipAnimReturn);
+
+    setMenuButtonAnimator(animatorSet);
+  }
+
+  private void setMenuButtonFlipCollapseIconAnimator(final Drawable icon) {
+    ObjectAnimator flipAnim = ObjectAnimator.ofFloat(floatingActionMenuButton, View.ROTATION_Y, 0);
+    flipAnim.setDuration(ANIMATION_DURATION);
+    flipAnim.setInterpolator(new LinearInterpolator());
+
+    flipAnim.addListener(new Animator.AnimatorListener() {
+      @Override public void onAnimationStart(Animator animator) {
+
+      }
+
+      @Override public void onAnimationEnd(Animator animator) {
+        floatingActionMenuButton.setIconDrawable(icon);
+      }
+
+      @Override public void onAnimationCancel(Animator animator) {
+
+      }
+
+      @Override public void onAnimationRepeat(Animator animator) {
+
+      }
+    });
+
+    ObjectAnimator flipAnimReturn =
+        ObjectAnimator.ofFloat(floatingActionMenuButton, View.ROTATION_Y, -90);
+    flipAnimReturn.setDuration(ANIMATION_DURATION);
+    flipAnimReturn.setInterpolator(new LinearInterpolator());
+
+    AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet.play(flipAnim).before(flipAnimReturn);
     setMenuButtonAnimator(animatorSet);
   }
 
   public void setMenuButtonAnimator(AnimatorSet animatorSet) {
-    this.animatorSet = animatorSet;
-    floatingActionMenuButton.setAnimatorSet(this.animatorSet);
+    floatingActionMenuButton.setAnimatorSet(animatorSet);
   }
   //endregion
 
@@ -236,20 +267,19 @@ public class FloatingActionsMenu extends RelativeLayout {
   }
 
   private void setMenuButtonIcon() {
-    if(menuIcon != null) {
-      floatingActionMenuButton.setIconDrawable(menuIcon);
-    }
-    else {
+    if (menuIcon != null) {
+      floatingActionMenuButton.setDefaultIconDrawable(menuIcon);
+    } else {
       boolean iconFounded = false;
-      for(int i = 0; !iconFounded && i<floatingActionsGroupSubmenuList.size(); i++) {
+      for (int i = 0; !iconFounded && i < floatingActionsGroupSubmenuList.size(); i++) {
         Drawable icon = floatingActionsGroupSubmenuList.get(i).getSubmenuIcon();
-        if(icon != null) {
-          floatingActionMenuButton.setIconDrawable(icon);
+        if (icon != null) {
+          floatingActionMenuButton.setDefaultIconDrawable(icon);
           iconFounded = true;
         }
       }
 
-      if(!iconFounded) {
+      if (!iconFounded) {
         throw new IllegalArgumentException("Menu icon or Submenu icon cannot be empty");
       }
     }
@@ -569,12 +599,12 @@ public class FloatingActionsMenu extends RelativeLayout {
       floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).collapse();
       currentGroupSubmenuIndex = -1;
       notifyMenuOverlayVisibility(false);
-      runMenuCollapseAnimator();
+      menuCollapseAnimation();
     } else {
       currentGroupSubmenuIndex = 0;
       floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex).expand();
       notifyMenuOverlayVisibility(true);
-      runMenuExpandAnimator();
+      menuExpandAnimation();
     }
   }
 
@@ -597,19 +627,20 @@ public class FloatingActionsMenu extends RelativeLayout {
 
     activeSubmenu.expand();
 
-    runMenuToogleAnimator();
+    menuToggleAnimation();
   }
 
-  private void runMenuExpandAnimator() {
-    runMenuToogleAnimator();
+  private void menuExpandAnimation() {
+    menuToggleAnimation();
   }
 
-  private void runMenuCollapseAnimator() {
-
+  private void menuCollapseAnimation() {
+    //setMenuButtonFlipCollapseIconAnimator(floatingActionMenuButton.getDefaultIconDrawable());
+    //floatingActionMenuButton.runAnimation();
   }
 
-  private void runMenuToogleAnimator() {
-    if(currentGroupSubmenuIndex != -1) {
+  private void menuToggleAnimation() {
+    if (currentGroupSubmenuIndex != -1) {
       GroupSubmenu activeSubmenu = floatingActionsGroupSubmenuList.get(currentGroupSubmenuIndex);
       activeSubmenu.expand();
 

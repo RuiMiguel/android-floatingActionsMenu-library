@@ -113,8 +113,7 @@
           ggg:fab_size="mini"
           />
     </com.ruialonso.floatingactionmenu.FloatingActionsSubmenu>
-
-    <com.ruialonso.floatingactionmenu.FloatingActionsSubmenu
+<!--    <com.ruialonso.floatingactionmenu.FloatingActionsSubmenu
         android:id="@+id/floating_actions_submenu3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,7 +129,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           ggg:fab_bg_color_pressed="@android:color/darker_gray"
-          ggg:fab_icon="@drawable/ic_fab_notifications"
+          ggg:fab_icon="@android:drawable/ic_dialog_map"
           ggg:fab_size="mini"
           />
       <com.ruialonso.floatingactionmenu.FloatingActionButton
@@ -158,7 +157,7 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           ggg:fab_bg_color_pressed="@android:color/darker_gray"
-          ggg:fab_icon="@drawable/ic_fab_search"
+          ggg:fab_icon="@android:drawable/ic_menu_zoom"
           ggg:fab_size="mini"
           />
       <com.ruialonso.floatingactionmenu.FloatingActionButton
@@ -169,6 +168,6 @@
           ggg:fab_icon="@android:drawable/ic_menu_compass"
           ggg:fab_size="normal"
           />
-    </com.ruialonso.floatingactionmenu.FloatingActionsSubmenu>
+    </com.ruialonso.floatingactionmenu.FloatingActionsSubmenu>-->
   </com.ruialonso.floatingactionmenu.FloatingActionsMenu>
 </RelativeLayout>

@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
@@ -44,6 +45,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
   private int menuRight;
   private int menuBottom;
 
+  private boolean animationLaunched = false;
   private FloatingActionsMenu menu;
 
   private List<FloatingActionButton> floatingActionButtonItems;
@@ -423,9 +425,9 @@ public class FloatingActionsSubmenu extends ViewGroup {
           childLeft = (int) (Math.cos(nextAngle) * radius) + center.x;
           childTop = (int) -(Math.sin(nextAngle) * radius) + center.y;
 
-          layoutChild(child, maxHeight, maxWidth, childLeft - child.getMeasuredWidth() / 2, childTop
-              - menu.floatingActionMenuButton.getMeasuredHeight()
-              - child.getMeasuredWidth() / 2);
+          layoutChild(child, maxHeight, maxWidth, childLeft - child.getMeasuredWidth() / 2,
+              childTop - menu.floatingActionMenuButton.getMeasuredHeight() - child.getMeasuredWidth() / 2);
+
 
           nextAngle += sweepAngle;
         }
@@ -442,34 +444,64 @@ public class FloatingActionsSubmenu extends ViewGroup {
     final int childWidth = child.getMeasuredWidth();
     final int childHeight = child.getMeasuredHeight();
 
-    setButtonAnimator(child, childLeft, childTop, childWidth, childHeight);
+    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+  }
+
+  private void layoutChildWithAnim(final View child, int maxHeight, int maxWidth,
+      final int childLeft, final int childTop) {
+    //Get the maximum size of the child
+    child.measure(MeasureSpec.makeMeasureSpec(maxWidth, MeasureSpec.AT_MOST),
+        MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST));
+    final int childWidth = child.getMeasuredWidth();
+    final int childHeight = child.getMeasuredHeight();
+
+    if (!animationLaunched)  {
+      setButtonAnimator(child, childLeft, childTop, childWidth, childHeight);
+      ((FloatingActionButton) child).runAnimation();
+      animationLaunched = true;
+    }
   }
   //endregion
 
-  private void setButtonAnimator(
-      final View child, final int childLeft, final int childTop, final int childWidth, final int childHeight) {
+  private void setButtonAnimator(final View child, final int childLeft, final int childTop,
+      final int childWidth, final int childHeight) {
     final int fromXDelta = menu.menuButtonCenter.x;
     final int fromYDelta = menu.menuButtonCenter.y;
     final int toXDelta = childLeft + childWidth / 2;
     final int toYDelta = childTop + childHeight / 2;
 
-    ObjectAnimator translateXAnim = ObjectAnimator.ofFloat(this, "x", fromXDelta, toXDelta);
-    translateXAnim.setDuration(500);
+    ObjectAnimator translateXAnim = ObjectAnimator.ofFloat(child, "x", fromXDelta, toXDelta);
+    translateXAnim.setDuration(1000);
     translateXAnim.setInterpolator(new BounceInterpolator());
 
-    ObjectAnimator translateYAnim = ObjectAnimator.ofFloat(this, "y", fromYDelta, toYDelta);
-    translateYAnim.setDuration(500);
+    ObjectAnimator translateYAnim = ObjectAnimator.ofFloat(child, "y", fromYDelta, toYDelta);
+    translateYAnim.setDuration(1000);
     translateYAnim.setInterpolator(new BounceInterpolator());
 
     AnimatorSet animatorSet = new AnimatorSet();
     animatorSet.play(translateXAnim).with(translateYAnim);
     animatorSet.addListener(new Animator.AnimatorListener() {
       @Override public void onAnimationStart(Animator animation) {
-
+        Log.d("AnimationStart", "fromX:"
+            + fromXDelta
+            + " -- toX:"
+            + toXDelta
+            + " fromY:"
+            + fromYDelta
+            + " toY:"
+            + toYDelta);
       }
 
       @Override public void onAnimationEnd(Animator animation) {
-        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+        Log.d("AnimationEnd", "fromX:"
+            + fromXDelta
+            + " -- toX:"
+            + toXDelta
+            + " fromY:"
+            + fromYDelta
+            + " toY:"
+            + toYDelta);
+        child.layout(toXDelta, toYDelta, toXDelta + childWidth, toYDelta + childHeight);
       }
 
       @Override public void onAnimationCancel(Animator animation) {
@@ -480,11 +512,10 @@ public class FloatingActionsSubmenu extends ViewGroup {
 
       }
     });
+  }
 
-    ((FloatingActionButton)child).setAnimatorSet(animatorSet);
-    //((FloatingActionButton)child).runAnimation();
-
-    child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+  public void setButtonAnimator(FloatingActionButton button, AnimatorSet animatorSet) {
+    button.setAnimatorSet(animatorSet);
   }
 
   //region Add/Remove buttons
@@ -538,6 +569,7 @@ public class FloatingActionsSubmenu extends ViewGroup {
   public void collapse() {
     if (isVisible) {
       isVisible = false;
+      animationLaunched = false;
 
       setVisibility(GONE);
 

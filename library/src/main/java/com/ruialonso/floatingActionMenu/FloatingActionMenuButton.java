@@ -1,20 +1,11 @@
 package com.ruialonso.floatingactionmenu;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.Shape;
+import android.os.Build;
 import android.support.annotation.DrawableRes;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 public class FloatingActionMenuButton extends FloatingActionButton {
   @DrawableRes private int buttonDefaultIcon;
@@ -58,21 +49,7 @@ public class FloatingActionMenuButton extends FloatingActionButton {
     setIcon(buttonDefaultIcon);
   }
 
-  //region animator
-  @Override
-  protected void initDefaultAnimation() {
-    /*
-    ObjectAnimator flipAnim = ObjectAnimator.ofFloat(this, View.ROTATION_Y, -90);
-    flipAnim.setDuration(500);
-    flipAnim.setInterpolator(new LinearInterpolator());
-
-    ObjectAnimator flipAnim2 = ObjectAnimator.ofFloat(this, View.ROTATION_Y, 0);
-    flipAnim2.setDuration(500);
-    flipAnim2.setInterpolator(new LinearInterpolator());
-
-    animatorSet = new AnimatorSet();
-    animatorSet.play(flipAnim).before(flipAnim2);
-    */
+  public void setDefaultIconDrawable(Drawable icon) {
+    setIconDrawable(icon);
   }
-  //endregion
 }
