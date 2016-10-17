@@ -7,9 +7,4 @@
   <dimen name="fab_width_mini">40dp</dimen>
 
   <dimen name="fab_margin_bottom">17dp</dimen>
-
-  <dimen name="fab_mini_horizontal_margin">29dp</dimen>
-
-  <dimen name="fab_fan_horizontal_margin">50dp</dimen>
-  <dimen name="fab_fan_vertical_margin">61dp</dimen>
 </resources>
