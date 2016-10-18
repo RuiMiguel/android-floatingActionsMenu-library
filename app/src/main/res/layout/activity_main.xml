@@ -29,7 +29,7 @@
 
   <include layout="@layout/content_main"/>
 
-  <com.ruialonso.floatingactionmenu.Fab
+  <com.ruialonso.floatingactionmenu.FloatingActionsMenu
       android:id="@+id/home_fab_button"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

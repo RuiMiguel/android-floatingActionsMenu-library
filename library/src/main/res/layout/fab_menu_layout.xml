@@ -10,19 +10,9 @@
       android:id="@+id/floating_actions_overlay"
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      android:background="#dd989e98"
+      android:background="#7d000000"
       android:visibility="invisible"
       >
-
-    <ImageView
-        android:id="@+id/floating_actions_logo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
-        android:src="@android:drawable/presence_audio_away"
-        />
   </RelativeLayout>
 
   <RelativeLayout
@@ -48,22 +38,22 @@
           android:layout_centerHorizontal="true"
           />
       <ImageView
-          android:id="@+id/floating_action_button_search"
+          android:id="@+id/floating_action_button1"
           android:layout_width="@dimen/fab_width_mini"
           android:layout_height="@dimen/fab_height_mini"
           android:layout_centerVertical="true"
           android:layout_marginRight="29dp"
           android:layout_toLeftOf="@id/fake_menu_button_submenu_horizontal"
-          android:src="@drawable/ic_fab_search"
+          android:src="@android:drawable/ic_menu_call"
           />
       <ImageView
-          android:id="@+id/floating_action_button_notifications"
+          android:id="@+id/floating_action_button2"
           android:layout_width="@dimen/fab_width_mini"
           android:layout_height="@dimen/fab_height_mini"
           android:layout_centerVertical="true"
           android:layout_marginLeft="29dp"
           android:layout_toRightOf="@id/fake_menu_button_submenu_horizontal"
-          android:src="@drawable/ic_fab_notifications"
+          android:src="@android:drawable/ic_menu_camera"
           />
     </RelativeLayout>
 
@@ -77,47 +67,47 @@
       <View
           android:id="@+id/fake_menu_button_submenu_fan"
           android:layout_width="@dimen/fab_width_mini"
-          android:layout_height="@dimen/fab_height_mini"
+          android:layout_height="@dimen/fab_height"
           android:layout_alignParentBottom="true"
           android:layout_centerHorizontal="true"
           />
       <ImageView
-          android:id="@+id/floating_action_button_light"
+          android:id="@+id/floating_action_button3"
           android:layout_width="@dimen/fab_width"
           android:layout_height="@dimen/fab_height"
           android:layout_alignParentBottom="true"
           android:layout_marginBottom="48dp"
           android:layout_marginRight="50dp"
           android:layout_toLeftOf="@+id/fake_menu_button_submenu_fan"
-          android:src="@drawable/ic_fab_light"
+          android:src="@android:drawable/ic_menu_today"
           />
       <ImageView
-          android:id="@+id/floating_action_button_heart"
+          android:id="@+id/floating_action_button4"
           android:layout_width="@dimen/fab_width"
           android:layout_height="@dimen/fab_height"
-          android:layout_above="@id/floating_action_button_light"
+          android:layout_above="@id/floating_action_button3"
           android:layout_marginBottom="13dp"
           android:layout_toLeftOf="@id/fake_menu_button_submenu_fan"
-          android:src="@drawable/ic_fab_heart"
+          android:src="@android:drawable/ic_menu_compass"
           />
       <ImageView
-          android:id="@+id/floating_action_button_smile"
+          android:id="@+id/floating_action_button5"
           android:layout_width="@dimen/fab_width"
           android:layout_height="@dimen/fab_height"
           android:layout_alignParentBottom="true"
           android:layout_marginBottom="48dp"
           android:layout_marginLeft="50dp"
           android:layout_toRightOf="@+id/fake_menu_button_submenu_fan"
-          android:src="@drawable/ic_fab_smile"
+          android:src="@android:drawable/ic_menu_zoom"
           />
       <ImageView
-          android:id="@+id/floating_action_button_thunder"
+          android:id="@+id/floating_action_button6"
           android:layout_width="@dimen/fab_width"
           android:layout_height="@dimen/fab_height"
-          android:layout_above="@id/floating_action_button_smile"
+          android:layout_above="@id/floating_action_button5"
           android:layout_marginBottom="13dp"
           android:layout_toRightOf="@id/fake_menu_button_submenu_fan"
-          android:src="@drawable/ic_fab_thunder"
+          android:src="@android:drawable/ic_menu_agenda"
           />
     </RelativeLayout>
 
@@ -127,7 +117,7 @@
         android:layout_height="@dimen/fab_height"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/ic_fab_menu_red"
+        android:src="@android:drawable/ic_dialog_map"
         />
   </RelativeLayout>
 </RelativeLayout>
